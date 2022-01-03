@@ -20,34 +20,26 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
-import QtQuick.Controls 2.12
+import QtQuick 2.3
+import QtQuick.Controls 2.3
 
 MenuBar {
     id: root
-    visible: app.menubarEnabled
 
     //
-    // Set background color + border
+    // Set background color
     //
     background: Rectangle {
-        gradient: Gradient {
-            GradientStop {
-                position: 0
-                color: Qt.lighter(app.windowBackgroundColor)
-            }
-
-            GradientStop {
-                position: 1
-                color: app.windowBackgroundColor
-            }
-        }
+        color: "transparent"
     }
 
     //
-    // Set this component as the application's default menubar upon creation
+    // Palette
     //
-    Component.onCompleted: app.menuBar = this
+    palette.text: Cpp_ThemeManager.menubarText
+    palette.base: Cpp_ThemeManager.toolbarGradient1
+    palette.window: Cpp_ThemeManager.toolbarGradient2
+    palette.highlightedText: Cpp_ThemeManager.highlightedText
 
     //
     // File menu
@@ -85,20 +77,20 @@ MenuBar {
             sequence: "ctrl+o"
             text: qsTr("Replay CSV") + "..."
             onTriggered: Cpp_CSV_Player.openFile()
-            enabled: Cpp_JSON_Generator.operationMode == 0
+            enabled: Cpp_JSON_Generator.operationMode === 0
         }
 
         MenuSeparator {}
 
         DecentMenuItem {
-            sequence: StandardKey.Print
+            sequence: "ctrl+p"
             text: qsTr("Print") + "..."
             enabled: Cpp_IO_Console.saveAvailable
             onTriggered: Cpp_IO_Console.print(app.monoFont)
         }
 
         DecentMenuItem {
-            sequence: StandardKey.Save
+            sequence: "ctrl+s"
             onClicked: Cpp_IO_Console.save()
             enabled: Cpp_IO_Console.saveAvailable
             text: qsTr("Export console output") + "..."
@@ -109,7 +101,7 @@ MenuBar {
         DecentMenuItem {
             text: qsTr("Quit")
             onTriggered: Qt.quit()
-            sequence: StandardKey.Quit
+            sequence: "ctrl+q"
         }
     }
 
@@ -121,19 +113,19 @@ MenuBar {
 
         DecentMenuItem {
             text: qsTr("Copy")
-            sequence: StandardKey.Copy
-            onTriggered: app.copyConsole()
+            sequence: "ctrl+c"
+            onTriggered: mainWindow.consoleCopy()
         }
 
         DecentMenuItem {
-            sequence: StandardKey.SelectAll
+            sequence: "ctrl+a"
             text: qsTr("Select all") + "..."
-            onTriggered: app.selectAllConsole()
+            onTriggered: mainWindow.consoleSelectAll()
         }
 
         DecentMenuItem {
-            sequence: StandardKey.Delete
-            onTriggered: app.clearConsole()
+            sequence: "ctrl+d"
+            onTriggered: mainWindow.consoleClear()
             text: qsTr("Clear console output")
         }
 
@@ -145,14 +137,14 @@ MenuBar {
             DecentMenuItem {
                 checkable: true
                 text: qsTr("Device sends JSON")
-                checked: Cpp_JSON_Generator.operationMode == 1
+                checked: Cpp_JSON_Generator.operationMode === 1
                 onTriggered: Cpp_JSON_Generator.operationMode = checked ? 1 : 0
             }
 
             DecentMenuItem {
                 checkable: true
                 text: qsTr("Load JSON from computer")
-                checked: Cpp_JSON_Generator.operationMode == 0
+                checked: Cpp_JSON_Generator.operationMode === 0
                 onTriggered: Cpp_JSON_Generator.operationMode = checked ? 0 : 1
             }
         }
@@ -168,11 +160,11 @@ MenuBar {
             checkable: true
             sequence: "ctrl+t"
             text: qsTr("Console")
-            checked: app.consoleVisible
-            onTriggered: app.showConsole()
+            checked: mainWindow.consoleVisible
+            onTriggered: mainWindow.showConsole()
             onCheckedChanged: {
-                if (app.consoleVisible !== checked)
-                    checked = app.consoleVisible
+                if (mainWindow.consoleVisible !== checked)
+                    checked = mainWindow.consoleVisible
             }
         }
 
@@ -180,25 +172,12 @@ MenuBar {
             checkable: true
             sequence: "ctrl+d"
             text: qsTr("Dashboard")
-            checked: app.dashboardVisible
-            enabled: app.dashboardAvailable
-            onTriggered: app.showDashboard()
+            checked: mainWindow.dashboardVisible
+            enabled: Cpp_UI_Dashboard.available
+            onTriggered: mainWindow.showDashboard()
             onCheckedChanged: {
-                if (app.dashboardVisible !== checked)
-                    checked = app.dashboardVisible
-            }
-        }
-
-        DecentMenuItem {
-            checkable: true
-            sequence: "ctrl+w"
-            text: qsTr("Widgets")
-            checked: app.widgetsVisible
-            enabled: app.widgetsAvailable
-            onTriggered: app.showWidgets()
-            onCheckedChanged: {
-                if (app.widgetsVisible !== checked)
-                    checked = app.widgetsVisible
+                if (mainWindow.dashboardVisible !== checked)
+                    checked = mainWindow.dashboardVisible
             }
         }
 
@@ -207,25 +186,18 @@ MenuBar {
         DecentMenuItem {
             checkable: true
             sequence: "ctrl+,"
-            checked: app.setupVisible
+            checked: mainWindow.setupVisible
             text: qsTr("Show setup pane")
-            onTriggered: app.togglePreferences()
+            onTriggered: mainWindow.showSetup()
         }
 
         MenuSeparator {}
 
         DecentMenuItem {
-            sequence: "alt+m"
-            onTriggered: app.toggleMenubar()
-            text: root.visible ? qsTr("Hide menubar") : qsTr("Show menubar")
-        }
-
-        MenuSeparator {}
-
-        DecentMenuItem {
-            sequence: StandardKey.FullScreen
-            onTriggered: app.toggleFullscreen()
-            text: app.fullScreen ? qsTr("Exit full screen") : qsTr("Enter full screen")
+            sequence: "f11"
+            onTriggered: mainWindow.toggleFullscreen()
+            text: mainWindow.isFullscreen ? qsTr("Exit full screen") :
+                                            qsTr("Enter full screen")
         }
     }
 
@@ -251,9 +223,9 @@ MenuBar {
 
         DecentMenuItem {
             checkable: true
-            checked: app.vt100emulation
+            checked: mainWindow.vt100emulation
             text: qsTr("VT-100 emulation")
-            onTriggered: app.vt100emulation = checked
+            onTriggered: mainWindow.vt100emulation = checked
         }
 
         DecentMenuItem {
@@ -271,14 +243,14 @@ MenuBar {
             DecentMenuItem {
                 checkable: true
                 text: qsTr("Normal (plain text)")
-                checked: Cpp_IO_Console.displayMode == 0
+                checked: Cpp_IO_Console.displayMode === 0
                 onTriggered: Cpp_IO_Console.displayMode = checked ? 0 : 1
             }
 
             DecentMenuItem {
                 checkable: true
                 text: qsTr("Binary (hexadecimal)")
-                checked: Cpp_IO_Console.displayMode == 1
+                checked: Cpp_IO_Console.displayMode === 1
                 onTriggered: Cpp_IO_Console.displayMode = checked ? 1 : 0
             }
         }
@@ -286,26 +258,32 @@ MenuBar {
         Menu {
             title: qsTr("Line ending character")
 
-            Repeater {
-                model: Cpp_IO_Console.lineEndings()
-                delegate: DecentMenuItem {
-                    id: menuItem
-                    checkable: true
-                    text: Cpp_IO_Console.lineEndings()[index]
-                    checked: Cpp_IO_Console.lineEnding === index
-                    onTriggered: Cpp_IO_Console.lineEnding = index
-                    onCheckedChanged: timer.start()
+            DecentMenuItem {
+                checkable: true
+                text: Cpp_IO_Console.lineEndings()[0]
+                checked: Cpp_IO_Console.lineEnding === 0
+                onTriggered: Cpp_IO_Console.lineEnding = 0
+            }
 
-                    Timer {
-                        id: timer
-                        interval: 100
-                        onTriggered: {
-                            var shouldBeChecked = (Cpp_IO_Console.lineEnding === index)
-                            if (menuItem.checked !== shouldBeChecked)
-                                menuItem.checked = shouldBeChecked
-                        }
-                    }
-                }
+            DecentMenuItem {
+                checkable: true
+                text: Cpp_IO_Console.lineEndings()[1]
+                checked: Cpp_IO_Console.lineEnding === 1
+                onTriggered: Cpp_IO_Console.lineEnding = 1
+            }
+
+            DecentMenuItem {
+                checkable: true
+                text: Cpp_IO_Console.lineEndings()[2]
+                checked: Cpp_IO_Console.lineEnding === 2
+                onTriggered: Cpp_IO_Console.lineEnding = 2
+            }
+
+            DecentMenuItem {
+                checkable: true
+                text: Cpp_IO_Console.lineEndings()[3]
+                checked: Cpp_IO_Console.lineEnding === 3
+                onTriggered: Cpp_IO_Console.lineEnding = 3
             }
         }
     }
@@ -317,7 +295,7 @@ MenuBar {
         title: qsTr("Help")
 
         DecentMenuItem {
-            onTriggered: app.showAbout()
+            onTriggered: app.aboutDialog.show()
             text: qsTr("About %1").arg(Cpp_AppName)
         }
 
@@ -335,8 +313,8 @@ MenuBar {
             checkable: true
             visible: Cpp_UpdaterEnabled
             enabled: Cpp_UpdaterEnabled
-            checked: app.automaticUpdates
-            onTriggered: app.automaticUpdates = checked
+            checked: mainWindow.automaticUpdates
+            onTriggered: mainWindow.automaticUpdates = checked
             text: qsTr("Auto-updater")
         }
 
@@ -355,17 +333,12 @@ MenuBar {
         }
 
         DecentMenuItem {
-            sequence: StandardKey.HelpContents
+            sequence: "f1"
             text: qsTr("Documentation/wiki") + "..."
             onTriggered: Qt.openUrlExternally("https://github.com/Serial-Studio/Serial-Studio/wiki")
         }
 
         MenuSeparator{}
-
-        DecentMenuItem {
-            text: qsTr("Show log file") + "..."
-            onTriggered: Cpp_Misc_Utilities.openLogFile()
-        }
 
         DecentMenuItem {
             text: qsTr("Report bug") + "..."

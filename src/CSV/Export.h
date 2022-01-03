@@ -20,19 +20,35 @@
  * THE SOFTWARE.
  */
 
-#ifndef CSV_EXPORT_H
-#define CSV_EXPORT_H
+#pragma once
 
 #include <QFile>
-#include <QList>
+#include <QVector>
 #include <QObject>
 #include <QVariant>
+#include <QDateTime>
 #include <QTextStream>
 #include <QJsonObject>
-#include <JSON/FrameInfo.h>
 
 namespace CSV
 {
+/**
+ * @brief The Export class
+ *
+ * The CSV export class receives data from the @c IO::Manager class and
+ * exports the received frames into a CSV file selected by the user.
+ *
+ * CSV-data is generated periodically each time the @c Misc::TimerEvents
+ * low-frequency timer expires (e.g. every 1 second). The idea behind this
+ * is to allow exporting data, but avoid freezing the application when serial
+ * data is received continuously.
+ */
+typedef struct
+{
+    QByteArray data;
+    QDateTime rxDateTime;
+} RawFrame;
+
 class Export : public QObject
 {
     // clang-format off
@@ -46,35 +62,39 @@ class Export : public QObject
                NOTIFY enabledChanged)
     // clang-format on
 
-signals:
+Q_SIGNALS:
     void openChanged();
     void enabledChanged();
 
+private:
+    explicit Export();
+    Export(Export &&) = delete;
+    Export(const Export &) = delete;
+    Export &operator=(Export &&) = delete;
+    Export &operator=(const Export &) = delete;
+
+    ~Export();
+
 public:
-    static Export *getInstance();
+    static Export &instance();
 
     bool isOpen() const;
     bool exportEnabled() const;
 
-private:
-    Export();
-    ~Export();
-
-public slots:
+public Q_SLOTS:
     void closeFile();
     void openCurrentCsv();
     void setExportEnabled(const bool enabled);
 
-private slots:
+private Q_SLOTS:
     void writeValues();
-    void registerFrame(const JFI_Object &info);
+    void registerFrame(const QByteArray &data);
+    void createCsvFile(const CSV::RawFrame &frame);
 
 private:
     QFile m_csvFile;
     bool m_exportEnabled;
     QTextStream m_textStream;
-    QList<JFI_Object> m_jsonList;
+    QVector<RawFrame> m_frames;
 };
 }
-
-#endif

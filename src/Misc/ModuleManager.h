@@ -20,32 +20,43 @@
  * THE SOFTWARE.
  */
 
-#ifndef MODULE_MANAGER_H
-#define MODULE_MANAGER_H
+#pragma once
 
 #include <QObject>
+#include <QSplashScreen>
 #include <QQmlApplicationEngine>
 
+#include <DataTypes.h>
+
+namespace Misc
+{
+/**
+ * @brief The ModuleManager class
+ *
+ * The @c ModuleManager class is in charge of initializing all the C++ modules that are
+ * part of Serial Studio in the correct order.
+ *
+ * Also, the class configures the QML rendering engine during application startup and
+ * displays a splash screen to entretain the user while the user interface is loaded.
+ */
 class ModuleManager : public QObject
 {
     Q_OBJECT
 
 public:
     ModuleManager();
-
-    void configureLogger();
     void configureUpdater();
     void registerQmlTypes();
     bool autoUpdaterEnabled();
     void initializeQmlInterface();
-
     QQmlApplicationEngine *engine();
 
-private slots:
-    void stopOperations();
+public Q_SLOTS:
+    void onQuit();
+    void hideSplashscreen();
 
 private:
+    QSplashScreen m_splash;
     QQmlApplicationEngine m_engine;
 };
-
-#endif
+}

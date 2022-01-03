@@ -20,99 +20,30 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
-import QtQuick.Dialogs 1.1
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.3
+import QtQuick.Window 2.3
+import QtQuick.Controls 2.3
 
-import Qt.labs.settings 1.0
+import "Windows" as Windows
 
-import "Windows"
-
-ApplicationWindow {
+Item {
     id: app
 
     //
-    // Global properties
+    // Global propeties
     //
     readonly property int spacing: 8
-    property bool firstValidPacket: false
-    readonly property color windowBackgroundColor: "#121920"
-    readonly property string monoFont: {
-        switch (Qt.platform.os) {
-        case "osx":
-            return "Monaco"
-        case "windows":
-            return "Consolas"
-        default:
-            return "Monospace"
-        }
-    }
+    readonly property string monoFont: "Roboto Mono"
 
     //
-    // We use this variable to ask the user if he/she wants to enable/disable
-    // automatic update checking on the second run
+    // Access to dialogs & windows
     //
-    property int appLaunchStatus: 0
-    property bool automaticUpdates: false
-
-    //
-    // Hacks to fix window maximized behavior
-    //
-    property bool firstChange: true
-    property bool windowMaximized: false
-    onVisibilityChanged: {
-        if (visibility == Window.Maximized) {
-            if (!windowMaximized)
-                firstChange = false
-
-            windowMaximized = true
-            fullScreen = false
-        }
-
-        else if (visibility === Window.FullScreen) {
-            if (!fullScreen)
-                firstChange = false
-
-            windowMaximized = false
-            fullScreen = true
-        }
-
-        else if (visibility !== Window.Hidden) {
-            if (windowMaximized || fullScreen && firstChange) {
-                app.x = 100
-                app.y = 100
-                app.width = app.minimumWidth
-                app.height = app.minimumHeight
-            }
-
-            fullScreen = false
-            windowMaximized = false
-        }
-
-    }
-
-    //
-    // Application UI status variables (used for the menubar)
-    //
-    property alias vt100emulation: terminal.vt100emulation
-    readonly property bool setupVisible: setup.visible
-    readonly property bool dashboardVisible: data.visible
-    readonly property bool widgetsVisible: widgets.visible
-    readonly property bool consoleVisible: terminal.visible
-    readonly property bool dashboardAvailable: Cpp_UI_Provider.groupCount > 0
-    readonly property bool widgetsAvailable: Cpp_UI_WidgetProvider.totalWidgetCount > 0
-
-    //
-    // Menubar status
-    //
-    property bool menubarEnabled: true
-
-    //
-    // Fullscreen status
-    //
-    property bool fullScreen: false
+    property Windows.About aboutDialog: null
+    property Windows.Donate donateDialog: null
+    property Windows.MainWindow mainWindow: null
+    property Windows.CsvPlayer csvPlayerDialog: null
+    property Windows.JsonEditor jsonEditorWindow: null
+    property Windows.Acknowledgements acknowledgementsDialog: null
 
     //
     // Check for updates (non-silent mode)
@@ -123,360 +54,15 @@ ApplicationWindow {
     }
 
     //
-    // Display about dialog
-    //
-    function showAbout() {
-        about.show()
-    }
-
-    //
-    // Display the console
-    //
-    function showConsole() {
-        toolbar.consoleClicked()
-    }
-
-    //
-    // Display the dashboard
-    //
-    function showDashboard() {
-        toolbar.dataClicked()
-    }
-
-    //
-    // Display the widgets
-    //
-    function showWidgets() {
-        toolbar.widgetsClicked()
-    }
-
-    //
-    // Toggle preferences pane
-    //
-    function togglePreferences() {
-        toolbar.setupClicked()
-    }
-
-    //
-    // Clears console output
-    //
-    function clearConsole() {
-        terminal.clearConsole()
-    }
-
-    //
-    // Copy console selection
-    //
-    function copyConsole() {
-        terminal.copy()
-    }
-
-    //
-    // Hide/show menubar
-    //
-    function toggleMenubar() {
-        app.menubarEnabled = !app.menubarEnabled
-    }
-
-    //
-    // Select all console text
-    //
-    function selectAllConsole() {
-        terminal.selectAll()
-    }
-
-    //
-    // Toggle fullscreen state
-    //
-    function toggleFullscreen() {
-        app.fullScreen = !app.fullScreen
-        if (app.fullScreen)
-            app.showFullScreen()
-        else
-            app.showNormal()
-    }
-
-    //
-    // Window geometry
-    //
-    visible: false
-    minimumWidth: 1040
-    title: Cpp_AppName + " v" + Cpp_AppVersion
-    minimumHeight: Qt.platform.os == "osx" ? 660 : 680
-
-    //
-    // Theme options
-    //
-    palette.text: "#fff"
-    palette.buttonText: "#fff"
-    palette.windowText: "#fff"
-    palette.window: app.windowBackgroundColor
-    background: Rectangle {
-        color: app.windowBackgroundColor
-    }
-
-    //
-    // Startup code
-    //
-    Component.onCompleted: {
-        // Hide dialogs, show devices pane
-        about.hide()
-        setup.show()
-        csvPlayer.hide()
-
-        // Hide everything except the terminal
-        data.opacity = 0
-        widgets.opacity = 0
-        terminal.opacity = 1
-
-        // Load welcome guide
-        terminal.showWelcomeGuide()
-
-        // Load JSON map file (if any)
-        Cpp_JSON_Generator.readSettings()
-
-        // Display the window & check for updates in 500 ms (we do this so that
-        // we wait for the window to read settings before showing it)
-        timer.start()
-    }
-
-    //
-    // Application menubar loader (we need to use a different version in macOS)
+    // MainWindow
     //
     Loader {
-        asynchronous: false
-        source: {
-            if (Qt.platform.os === "osx")
-                return "qrc:/qml/PlatformDependent/MenubarMacOS.qml"
-
-            return "qrc:/qml/PlatformDependent/Menubar.qml"
-        }
-    }
-
-    //
-    // Startup timer
-    //
-    Timer {
-        id: timer
-        interval: 500
-        onTriggered: {
-            // Startup verifications to ensure that bad settings
-            // do not make our app reside outside screen
-            if (x < 0 || x >= Screen.desktopAvailableWidth)
-                x = 100
-            if (y < 0 || y >= Screen.desktopAvailableHeight)
-                y = 100
-
-            // Startup verifications to ensure that app fits in current screen
-            if (width > Screen.desktopAvailableWidth) {
-                x = 100
-                width = Screen.desktopAvailableWidth - x
-            }
-
-            // Startup verifications to ensure that app fits in current screen
-            if (height > Screen.desktopAvailableHeight) {
-                y = 100
-                height = Screen.desktopAvailableHeight - y
-            }
-
-            // Show app window
-            if (app.fullScreen)
-                app.showFullScreen()
-            else if (app.windowMaximized)
-                app.showMaximized()
-            else
-                app.showNormal()
-
-            // Increment app launch count until 3:
-            // Value & meaning:
-            // - 1: first launch
-            // - 2: second launch, ask to enable automatic updater
-            // - 3: we don't care the number of times the user launched the app
-            if (appLaunchStatus < 3)
-                ++appLaunchStatus
-
-            // Second launch ask user if he/she wants to enable automatic updates
-            if (appLaunchStatus == 2)
-                automaticUpdatesMessageDialog.visible = Cpp_UpdaterEnabled
-
-            // Check for updates (if we are allowed)
-            if (automaticUpdates && Cpp_UpdaterEnabled)
-                Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
-        }
-    }
-
-    //
-    // Hide console & device manager when we receive first valid packet
-    //
-    Connections {
-        target: Cpp_UI_Provider
-        enabled: !app.firstValidPacket
-        function onUpdated()  {
-            if ((Cpp_IO_Manager.connected || Cpp_CSV_Player.isOpen) && Cpp_UI_Provider.frameValid()) {
-                app.firstValidPacket = true
-                setup.hide()
-                app.showDashboard()
-            } else {
-                toolbar.consoleClicked()
-                setup.show()
-                app.firstValidPacket = false
-            }
-        }
-    }
-
-    //
-    // Show console tab on serial disconnect
-    //
-    Connections {
-        target: Cpp_UI_Provider
-        function onDataReset() {
-            toolbar.consoleClicked()
-            setup.show()
-            app.firstValidPacket = false
-        }
-    }
-
-    //
-    // Save window size & position
-    //
-    Settings {
-        property alias appX: app.x
-        property alias appY: app.y
-        property alias appW: app.width
-        property alias appH: app.height
-        property alias appStatus: app.appLaunchStatus
-        property alias windowFullScreen: app.fullScreen
-        property alias autoUpdater: app.automaticUpdates
-        property alias appMaximized: app.windowMaximized
-        property alias menubarVisible: app.menubarEnabled
-    }
-
-    //
-    // Main layout
-    //
-    ColumnLayout {
-        spacing: 0
-        anchors.fill: parent
-
-        Toolbar {
-            z: 1
-            id: toolbar
-            Layout.fillWidth: true
-            Layout.minimumHeight: 48
-            Layout.maximumHeight: 48
-            setupChecked: app.setupVisible
-            dataChecked: app.dashboardVisible
-            widgetsChecked: app.widgetsVisible
-            consoleChecked: app.consoleVisible
-            onSetupClicked: setup.visible ? setup.hide() : setup.show()
-
-            onDataClicked: {
-                if (app.dashboardAvailable) {
-                    data.opacity     = 1
-                    terminal.opacity = 0
-                    widgets.opacity  = 0
-                    dataChecked      = true
-                    consoleChecked   = false
-                    widgetsChecked   = false
-                }
-
-                else
-                    app.showConsole()
-            }
-
-            onConsoleClicked: {
-                data.opacity     = 0
-                terminal.opacity = 1
-                widgets.opacity  = 0
-                consoleChecked   = true
-                dataChecked      = false
-                widgetsChecked   = false
-            }
-
-            onWidgetsClicked: {
-                if (app.widgetsAvailable) {
-                    data.opacity     = 0
-                    terminal.opacity = 0
-                    widgets.opacity  = 1
-                    dataChecked      = false
-                    widgetsChecked   = true
-                    consoleChecked   = false
-                }
-
-                else
-                    app.showConsole()
-            }
-        }
-
-        RowLayout {
-            spacing: 0
-            clip: true
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                Console {
-                    id: terminal
-                    anchors.fill: parent
-
-                    // Animate on show
-                    enabled: opacity > 0
-                    visible: opacity > 0
-                    Behavior on opacity {NumberAnimation{}}
-
-                    // Show translated welcome text on lang. change
-                    Connections {
-                        target: Cpp_Misc_Translator
-                        function onLanguageChanged() {
-                            terminal.showWelcomeGuide()
-                        }
-                    }
-                }
-
-                DataGrid {
-                    id: data
-                    anchors.fill: parent
-
-                    // Animate on show
-                    visible: opacity > 0
-                    Behavior on opacity {NumberAnimation{}}
-                }
-
-                Widgets {
-                    id: widgets
-                    anchors.fill: parent
-
-                    // Animate on show
-                    enabled: opacity > 0
-                    visible: opacity > 0
-                    Behavior on opacity {NumberAnimation{}}
-                }
-            }
-
-            Setup {
-                id: setup
-                property int displayedWidth: 340
-
-                function show() {
-                    opacity = 1
-                    displayedWidth = 320
-                }
-
-                function hide() {
-                    opacity = 0
-                    displayedWidth = 0
-                }
-
-                visible: opacity > 0
-                Layout.fillHeight: true
-                Layout.minimumWidth: displayedWidth
-                Layout.maximumWidth: displayedWidth
-
-                Behavior on opacity {NumberAnimation{}}
-                Behavior on displayedWidth {NumberAnimation{}}
+        asynchronous: true
+        sourceComponent: Windows.MainWindow {
+            Component.onCompleted: {
+                Cpp_ModuleManager.hideSplashscreen()
+                app.forceActiveFocus()
+                app.mainWindow = this
             }
         }
     }
@@ -484,156 +70,50 @@ ApplicationWindow {
     //
     // About window
     //
-    About {
-        id: about
+    Loader {
+        asynchronous: true
+        sourceComponent: Windows.About {
+            Component.onCompleted: app.aboutDialog = this
+        }
     }
 
     //
     // CSV player window
     //
-    CsvPlayer {
-        id: csvPlayer
-    }
-
-    //
-    // Enable/disable automatic updates dialog
-    //
-    MessageDialog {
-        id: automaticUpdatesMessageDialog
-
-        title: Cpp_AppName
-        icon: StandardIcon.Question
-        modality: Qt.ApplicationModal
-        standardButtons: StandardButton.Yes | StandardButton.No
-        text: "<h3>" + qsTr("Check for updates automatically?") + "</h3>"
-        informativeText: qsTr("Should %1 automatically check for updates? " +
-                              "You can always check for updates manually from " +
-                              "the \"Help\" menu").arg(Cpp_AppName);
-
-        // Behavior when the user clicks on "Yes"
-        onAccepted: {
-            app.automaticUpdates = true
-            Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
-        }
-
-        // Behavior when the user clicks on "No"
-        onRejected: {
-            app.automaticUpdates = false
+    Loader {
+        asynchronous: true
+        sourceComponent: Windows.CsvPlayer {
+            Component.onCompleted: app.csvPlayerDialog = this
         }
     }
 
     //
-    // Intuitive UI stuff for drag and drop
+    // JSON Editor dialog
     //
-    Rectangle {
-        id: dropRectangle
-
-        function hide() {
-            rectTimer.start()
+    Loader {
+        asynchronous: true
+        sourceComponent: Windows.JsonEditor {
+            Component.onCompleted: app.jsonEditorWindow = this
         }
-
-        opacity: 0
-        border.width: 1
-        border.color: "#fff"
-        color: palette.highlight
-        anchors.centerIn: parent
-        width: dropLayout.implicitWidth + 6 * app.spacing
-        height: dropLayout.implicitHeight + 6 * app.spacing
-
-
-        ColumnLayout {
-            id: dropLayout
-            spacing: app.spacing * 2
-            anchors.centerIn: parent
-
-            ToolButton {
-                flat: true
-                enabled: false
-                icon.width: 128
-                icon.height: 128
-                icon.color: "#fff"
-                Layout.alignment: Qt.AlignHCenter
-                icon.source: "qrc:/icons/drag-drop.svg"
-            }
-
-            Label {
-                color: "#fff"
-                font.bold: true
-                font.pixelSize: 24
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Drop JSON and CSV files here")
-            }
-        }
-
-        Timer {
-            id: rectTimer
-            interval: 200
-            onTriggered: dropRectangle.opacity = 0
-        }
-
-        Behavior on opacity {NumberAnimation{}}
     }
 
     //
-    // File drop area
+    // Donations dialog
     //
-    DropArea {
-        id: dropArea
-        anchors.fill: parent
-        enabled: terminal.visible
-
-        //
-        // Show rectangle and set color based on file extension on drag enter
-        //
-        onEntered: {
-            // Get file name & set color of rectangle accordingly
-            var path = drag.urls[0].toString()
-            if (path.endsWith(".json") || path.endsWith(".csv")) {
-                drag.accept(Qt.LinkAction)
-                dropRectangle.color = Qt.darker(palette.highlight, 1.4)
-            }
-
-            // Invalid file name, show red rectangle
-            else
-                dropRectangle.color = "#d72d60"
-
-            // Show drag&drop rectangle
-            dropRectangle.opacity = 0.8
+    Loader {
+        asynchronous: false
+        sourceComponent: Windows.Donate {
+            Component.onCompleted: app.donateDialog = this
         }
+    }
 
-        //
-        // Open *.json & *.csv files on drag drop
-        //
-        onDropped: {
-            // Hide rectangle
-            dropRectangle.hide()
-            
-            // Get dropped file URL and remove prefixed "file://"
-            var path = drop.urls[0].toString()
-            if (Qt.platform.os != "windows")
-                path = path.replace(/^(file:\/{2})/,"");
-            else
-                path = path.replace(/^(file:\/{3})/,"");
-
-            // Unescape html codes like '%23' for '#'
-            var cleanPath = decodeURIComponent(path);
-
-            // Process JSON files
-            if (cleanPath.endsWith(".json")) {
-                Cpp_JSON_Generator.setOperationMode(0)
-                Cpp_JSON_Generator.loadJsonMap(cleanPath, false)
-            }
-
-            // Process CSV files
-            else if (cleanPath.endsWith(".csv"))
-                Cpp_CSV_Player.openFile(cleanPath)
-        }
-
-        //
-        // Hide drag & drop rectangle on drag exit
-        //
-        onExited: {
-            dropRectangle.hide()
+    //
+    // Acknowledgements dialog
+    //
+    Loader {
+        asynchronous: true
+        sourceComponent: Windows.Acknowledgements {
+            Component.onCompleted: app.acknowledgementsDialog = this
         }
     }
 }

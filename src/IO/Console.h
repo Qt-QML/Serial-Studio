@@ -20,14 +20,23 @@
  * THE SOFTWARE.
  */
 
-#ifndef IO_CONSOLE_H
-#define IO_CONSOLE_H
+#pragma once
 
 #include <QObject>
-#include <QStringList>
+#include <DataTypes.h>
 
 namespace IO
 {
+/**
+ * @brief The Console class
+ *
+ * The console class receives data from the @c IO::Manager class and
+ * processes it so that it can be easily appended to a text edit widget.
+ *
+ * The class also controls various UI-related factors, such as the display
+ * format of the data (e.g. ASCII or HEX), history of sent commands and
+ * exporting of the RX data.
+ */
 class Console : public QObject
 {
     // clang-format off
@@ -64,7 +73,7 @@ class Console : public QObject
                NOTIFY historyItemChanged)
     // clang-format on
 
-signals:
+Q_SIGNALS:
     void echoChanged();
     void dataReceived();
     void dataModeChanged();
@@ -75,6 +84,13 @@ signals:
     void textDocumentChanged();
     void showTimestampChanged();
     void stringReceived(const QString &text);
+
+private:
+    explicit Console();
+    Console(Console &&) = delete;
+    Console(const Console &) = delete;
+    Console &operator=(Console &&) = delete;
+    Console &operator=(const Console &) = delete;
 
 public:
     enum class DisplayMode
@@ -100,7 +116,7 @@ public:
     };
     Q_ENUM(LineEnding)
 
-    static Console *getInstance();
+    static Console &instance();
 
     bool echo() const;
     bool autoscroll() const;
@@ -112,12 +128,12 @@ public:
     DisplayMode displayMode() const;
     QString currentHistoryString() const;
 
-    Q_INVOKABLE QStringList dataModes() const;
-    Q_INVOKABLE QStringList lineEndings() const;
-    Q_INVOKABLE QStringList displayModes() const;
+    Q_INVOKABLE StringList dataModes() const;
+    Q_INVOKABLE StringList lineEndings() const;
+    Q_INVOKABLE StringList displayModes() const;
     Q_INVOKABLE QString formatUserHex(const QString &text);
 
-public slots:
+public Q_SLOTS:
     void save();
     void clear();
     void historyUp();
@@ -125,21 +141,19 @@ public slots:
     void send(const QString &data);
     void setEcho(const bool enabled);
     void print(const QString &fontFamily);
-    void setDataMode(const DataMode mode);
     void setAutoscroll(const bool enabled);
     void setShowTimestamp(const bool enabled);
-    void setLineEnding(const LineEnding mode);
-    void setDisplayMode(const DisplayMode mode);
+    void setDataMode(const IO::Console::DataMode &mode);
+    void setLineEnding(const IO::Console::LineEnding &mode);
+    void setDisplayMode(const IO::Console::DisplayMode &mode);
     void append(const QString &str, const bool addTimestamp = false);
 
-private slots:
-    void displayData();
+private Q_SLOTS:
     void onDataSent(const QByteArray &data);
     void addToHistory(const QString &command);
     void onDataReceived(const QByteArray &data);
 
 private:
-    Console();
     QByteArray hexToBytes(const QString &data);
     QString dataToString(const QByteArray &data);
     QString plainTextStr(const QByteArray &data);
@@ -157,13 +171,10 @@ private:
     bool m_showTimestamp;
     bool m_isStartingLine;
 
-    QStringList m_lines;
-    QStringList m_historyItems;
+    StringList m_lines;
+    StringList m_historyItems;
 
-    QString m_textBuffer;
     QString m_printFont;
-    QByteArray m_dataBuffer;
+    QString m_textBuffer;
 };
 }
-
-#endif

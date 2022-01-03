@@ -20,12 +20,14 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
-import QtQuick.Window 2.0
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.3
+import QtQuick.Window 2.3
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 
-Window {
+import "../FramelessWindow" as FramelessWindow
+
+FramelessWindow.CustomWindow {
     id: root
 
     //
@@ -37,22 +39,69 @@ Window {
     // Window options
     //
     title: qsTr("About")
-    minimumWidth: column.implicitWidth + 4 * app.spacing
-    maximumWidth: column.implicitWidth + 4 * app.spacing
-    minimumHeight: column.implicitHeight + 4 * app.spacing
-    maximumHeight: column.implicitHeight + 4 * app.spacing
-    flags: Qt.Dialog | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
+    width: minimumWidth
+    height: minimumHeight
+    x: (Screen.desktopAvailableWidth - width) / 2
+    y: (Screen.desktopAvailableHeight - height) / 2
+    minimumWidth: column.implicitWidth + 4 * app.spacing + 2 * root.shadowMargin
+    maximumWidth: column.implicitWidth + 4 * app.spacing + 2 * root.shadowMargin
+    extraFlags: Qt.WindowStaysOnTopHint | Qt.Dialog | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
+    minimumHeight: column.implicitHeight + 4 * app.spacing + titlebar.height + 2 * root.shadowMargin
+    maximumHeight: column.implicitHeight + 4 * app.spacing + titlebar.height + 2 * root.shadowMargin
+
+    //
+    // Titlebar options
+    //
+    minimizeEnabled: false
+    maximizeEnabled: false
+    titlebarText: Cpp_ThemeManager.text
+    titlebarColor: Cpp_ThemeManager.dialogBackground
+    backgroundColor: Cpp_ThemeManager.dialogBackground
 
     //
     // Use page item to set application palette
     //
     Page {
-        anchors.margins: 0
-        anchors.fill: parent
-        palette.text: "#fff"
-        palette.buttonText: "#fff"
-        palette.windowText: "#fff"
-        palette.window: app.windowBackgroundColor
+        anchors {
+            fill: parent
+            margins: root.shadowMargin
+            topMargin: titlebar.height + root.shadowMargin
+        }
+
+        palette.text: Cpp_ThemeManager.text
+        palette.buttonText: Cpp_ThemeManager.text
+        palette.windowText: Cpp_ThemeManager.text
+        palette.window: Cpp_ThemeManager.dialogBackground
+        background: Rectangle {
+            radius: root.radius
+            color: root.backgroundColor
+
+            Rectangle {
+                height: root.radius
+                color: root.backgroundColor
+
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                }
+            }
+        }
+
+        //
+        // Window drag handler
+        //
+        Item {
+            anchors.fill: parent
+
+            MouseArea {
+                anchors.fill: parent
+                onPressedChanged: {
+                    if (pressed)
+                        root.startSystemMove()
+                }
+            }
+        }
 
         //
         // Window controls
@@ -67,8 +116,8 @@ Window {
                 Layout.fillWidth: true
 
                 Image {
-                    width: 96
-                    height: 96
+                    width: 128
+                    height: 128
                     source: "qrc:/images/icon.png"
                     Layout.alignment: Qt.AlignVCenter
                     sourceSize: Qt.size(width, height)
@@ -96,7 +145,7 @@ Window {
             Label {
                 opacity: 0.8
                 Layout.fillWidth: true
-                Layout.maximumWidth: 288
+                Layout.maximumWidth: 320
                 wrapMode: Label.WrapAtWordBoundaryOrAnywhere
                 text: qsTr("Copyright © 2020-%1 %2, released under the MIT License.").arg(root.year).arg(Cpp_AppOrganization)
             }
@@ -105,9 +154,9 @@ Window {
                 opacity: 0.8
                 font.pixelSize: 12
                 Layout.fillWidth: true
-                Layout.maximumWidth: 288
-                color: palette.highlightedText
+                Layout.maximumWidth: 320
                 wrapMode: Label.WrapAtWordBoundaryOrAnywhere
+                color: Cpp_ThemeManager.highlightedTextAlternative
                 text: qsTr("The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.")
             }
 
@@ -118,13 +167,13 @@ Window {
             Button {
                 Layout.fillWidth: true
                 text: qsTr("Website")
-                onClicked: Qt.openUrlExternally("https://www.alex-spataru.com/serial-studio")
+                onClicked: Qt.openUrlExternally("https://serial-studio.github.io/")
             }
 
             Button {
                 Layout.fillWidth: true
-                text: qsTr("Contact author")
-                onClicked: Qt.openUrlExternally("mailto:alex_spataru@outlook.com")
+                text: qsTr("Make a donation")
+                onClicked: app.donateDialog.show()
             }
 
             Button {
@@ -142,7 +191,7 @@ Window {
             Button {
                 Layout.fillWidth: true
                 text: qsTr("Acknowledgements")
-                onClicked: acknowledgements.show()
+                onClicked: acknowledgementsDialog.show()
             }
 
             Item {
@@ -154,17 +203,6 @@ Window {
                 onClicked: root.close()
                 text: qsTr("Close")
             }
-
-            Item {
-                height: app.spacing
-            }
         }
-    }
-
-    //
-    // Acknowledgements dialog
-    //
-    Acknowledgements {
-        id: acknowledgements
     }
 }

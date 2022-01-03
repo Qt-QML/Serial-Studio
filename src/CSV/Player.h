@@ -20,19 +20,20 @@
  * THE SOFTWARE.
  */
 
-#ifndef CSV_PLAYER_H
-#define CSV_PLAYER_H
+#pragma once
 
-#include <QMap>
-#include <QSet>
 #include <QFile>
-#include <QTimer>
 #include <QObject>
-#include <QStringList>
-#include <QJsonDocument>
+#include <QVector>
 
 namespace CSV
 {
+/**
+ * @brief The Player class
+ *
+ * The CSV player class allows users to select a CSV file and "re-play" it
+ * with Serial Studio.
+ */
 class Player : public QObject
 {
     // clang-format off
@@ -51,13 +52,20 @@ class Player : public QObject
                NOTIFY timestampChanged)
     // clang-format on
 
-signals:
+Q_SIGNALS:
     void openChanged();
     void timestampChanged();
     void playerStateChanged();
 
+private:
+    explicit Player();
+    Player(Player &&) = delete;
+    Player(const Player &) = delete;
+    Player &operator=(Player &&) = delete;
+    Player &operator=(const Player &) = delete;
+
 public:
-    static Player *getInstance();
+    static Player &instance();
 
     bool isOpen() const;
     qreal progress() const;
@@ -66,11 +74,9 @@ public:
     QString filename() const;
     int framePosition() const;
     QString timestamp() const;
+    QString csvFilesPath() const;
 
-private:
-    Player();
-
-public slots:
+public Q_SLOTS:
     void play();
     void pause();
     void toggle();
@@ -79,27 +85,21 @@ public slots:
     void nextFrame();
     void previousFrame();
     void openFile(const QString &filePath);
-    void setProgress(const qreal progress);
+    void setProgress(const qreal &progress);
 
-private slots:
+private Q_SLOTS:
     void updateData();
 
 private:
     bool validateRow(const int row);
-    QJsonDocument getJsonFrame(const int row);
-    QString getCellValue(int row, int column, bool *error = nullptr);
-    int getDatasetIndex(const QString &groupKey, const QString &datasetKey);
+    QByteArray getFrame(const int row);
+    QString getCellValue(const int row, const int column, bool &error);
 
 private:
     int m_framePos;
     bool m_playing;
     QFile m_csvFile;
-    QTimer m_frameTimer;
     QString m_timestamp;
-    QList<QStringList> m_csvData;
-    QMap<QString, QSet<QString>> m_model;
-    QMap<QString, QMap<QString, int>> m_datasetIndexes;
+    QVector<QVector<QString>> m_csvData;
 };
 }
-
-#endif

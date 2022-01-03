@@ -20,44 +20,30 @@
  * THE SOFTWARE.
  */
 
-#include "Translator.h"
-
-#include <Logger.h>
-#include <ConsoleAppender.h>
-
-using namespace Misc;
-
-/**
- * Only instance of the class
- */
-static Translator *INSTANCE = nullptr;
+#include <Misc/Translator.h>
 
 /**
  * Constructor function
  */
-Translator::Translator()
+Misc::Translator::Translator()
 {
-    m_language = systemLanguage();
-    LOG_TRACE() << "Class initialized";
-    LOG_TRACE() << "System language" << systemLanguage();
+    setLanguage(m_settings.value("language", systemLanguage()).toInt());
 }
 
 /**
  * Returns the only instance of the class
  */
-Translator *Translator::getInstance()
+Misc::Translator &Misc::Translator::instance()
 {
-    if (!INSTANCE)
-        INSTANCE = new Translator;
-
-    return INSTANCE;
+    static Translator singleton;
+    return singleton;
 }
 
 /**
  * Returns the current language ID, which corresponds to the indexes of the
  * languages returned by the \c availableLanguages() function.
  */
-int Translator::language() const
+int Misc::Translator::language() const
 {
     return m_language;
 }
@@ -66,7 +52,7 @@ int Translator::language() const
  * Returns the appropiate language ID based on the current locale settings of
  * the host's operating system.
  */
-int Translator::systemLanguage() const
+int Misc::Translator::systemLanguage() const
 {
     int lang;
     switch (QLocale::system().language())
@@ -83,6 +69,9 @@ int Translator::systemLanguage() const
         case QLocale::German:
             lang = 3;
             break;
+        case QLocale::Russian:
+            lang = 4;
+            break;
         default:
             lang = 0;
             break;
@@ -94,7 +83,7 @@ int Translator::systemLanguage() const
 /**
  * Returns the welcome text displayed on the console
  */
-QString Translator::welcomeConsoleText() const
+QString Misc::Translator::welcomeConsoleText() const
 {
     QString lang;
     switch (language())
@@ -110,6 +99,9 @@ QString Translator::welcomeConsoleText() const
             break;
         case 3:
             lang = "DE";
+            break;
+        case 4:
+            lang = "RU";
             break;
         default:
             lang = "EN";
@@ -130,7 +122,7 @@ QString Translator::welcomeConsoleText() const
 /**
  * Returns the acknowledgements text.
  */
-QString Translator::acknowledgementsText() const
+QString Misc::Translator::acknowledgementsText() const
 {
     QString text = "";
     QFile file(":/messages/Acknowledgements.txt");
@@ -146,9 +138,9 @@ QString Translator::acknowledgementsText() const
 /**
  * Returns a list with the available translation languages.
  */
-QStringList Translator::availableLanguages() const
+StringList Misc::Translator::availableLanguages() const
 {
-    return QStringList { "English", "Español", "简体中文", "Deutsch" };
+    return StringList { "English", "Español", "简体中文", "Deutsch", "Русский" };
 }
 
 /**
@@ -158,7 +150,7 @@ QStringList Translator::availableLanguages() const
  * @param language language ID based on the indexes of the \a
  * availableLanguages() function
  */
-void Translator::setLanguage(const int language)
+void Misc::Translator::setLanguage(const int language)
 {
     QString langName;
     QLocale locale;
@@ -180,6 +172,10 @@ void Translator::setLanguage(const int language)
             langName = "de";
             locale = QLocale(QLocale::German);
             break;
+        case 4:
+            langName = "ru";
+            locale = QLocale(QLocale::Russian);
+            break;
         default:
             langName = "en";
             locale = QLocale(QLocale::English);
@@ -187,6 +183,8 @@ void Translator::setLanguage(const int language)
     }
 
     m_language = language;
+    m_settings.setValue("language", m_language);
+
     setLanguage(locale, langName);
 }
 
@@ -198,12 +196,16 @@ void Translator::setLanguage(const int language)
  * @param language  name of the *.qm file to load from the "translations"
  *                  directory inside the application's resources
  */
-void Translator::setLanguage(const QLocale &locale, const QString &language)
+void Misc::Translator::setLanguage(const QLocale &locale, const QString &language)
 {
     qApp->removeTranslator(&m_translator);
-    m_translator.load(locale, ":/translations/" + language + ".qm");
-    qApp->installTranslator(&m_translator);
-    emit languageChanged();
-
-    LOG_TRACE() << "Language set to" << language;
+    if (m_translator.load(locale, ":/translations/" + language + ".qm"))
+    {
+        qApp->installTranslator(&m_translator);
+        Q_EMIT languageChanged();
+    }
 }
+
+#ifdef SERIAL_STUDIO_INCLUDE_MOC
+#    include "moc_Translator.cpp"
+#endif

@@ -20,26 +20,18 @@
  * THE SOFTWARE.
  */
 
-#include "Serial.h"
-
-#include <Logger.h>
 #include <IO/Manager.h>
 #include <Misc/Utilities.h>
-#include <ConsoleAppender.h>
 #include <Misc/TimerEvents.h>
-
-using namespace IO::DataSources;
-
-/**
- * Pointer to the only instance of the class.
- */
-static Serial *INSTANCE = nullptr;
+#include <IO/DataSources/Serial.h>
 
 /**
  * Constructor function
  */
-Serial::Serial()
-    : m_port(nullptr)
+IO::DataSources::Serial::Serial()
+    : m_port(Q_NULLPTR)
+    , m_autoReconnect(false)
+    , m_lastSerialDeviceIndex(0)
     , m_portIndex(0)
 {
     // Read settings
@@ -53,19 +45,18 @@ Serial::Serial()
     setParity(parityList().indexOf(tr("None")));
     setFlowControl(flowControlList().indexOf(tr("None")));
 
-    // Build serial devices list
-    auto te = Misc::TimerEvents::getInstance();
-    connect(te, SIGNAL(timeout1Hz()), this, SLOT(refreshSerialDevices()));
-
-    // Log class init
-    LOG_TRACE() << "Class initialized";
+    // Build serial devices list and refresh it every second
+    // clang-format off
+    connect(&Misc::TimerEvents::instance(), &Misc::TimerEvents::timeout1Hz,
+            this, &IO::DataSources::Serial::refreshSerialDevices);
+    // clang-format on
 }
 
 /**
  * Destructor function, closes the serial port before exiting the application and saves
  * the user's baud rate list settings.
  */
-Serial::~Serial()
+IO::DataSources::Serial::~Serial()
 {
     writeSettings();
 
@@ -76,18 +67,16 @@ Serial::~Serial()
 /**
  * Returns the only instance of the class
  */
-Serial *Serial::getInstance()
+IO::DataSources::Serial &IO::DataSources::Serial::instance()
 {
-    if (INSTANCE == nullptr)
-        INSTANCE = new Serial;
-
-    return INSTANCE;
+    static Serial singleton;
+    return singleton;
 }
 
 /**
  * Returns the pointer to the current serial port handler
  */
-QSerialPort *Serial::port() const
+QSerialPort *IO::DataSources::Serial::port() const
 {
     return m_port;
 }
@@ -95,7 +84,7 @@ QSerialPort *Serial::port() const
 /**
  * Returns the name of the current serial port device
  */
-QString Serial::portName() const
+QString IO::DataSources::Serial::portName() const
 {
     if (port())
         return port()->portName();
@@ -104,10 +93,18 @@ QString Serial::portName() const
 }
 
 /**
+ * Returns @c true if auto-reconnect is enabled
+ */
+bool IO::DataSources::Serial::autoReconnect() const
+{
+    return m_autoReconnect;
+}
+
+/**
  * Returns @c true if the user selects the appropiate controls & options to be able
  * to connect to a serial device
  */
-bool Serial::configurationOk() const
+bool IO::DataSources::Serial::configurationOk() const
 {
     return portIndex() > 0;
 }
@@ -115,43 +112,43 @@ bool Serial::configurationOk() const
 /**
  * Returns the index of the current serial device selected by the program.
  */
-quint8 Serial::portIndex() const
+quint8 IO::DataSources::Serial::portIndex() const
 {
     return m_portIndex;
 }
 
 /**
  * Returns the correspoding index of the parity configuration in relation
- * to the @c QStringList returned by the @c parityList() function.
+ * to the @c StringList returned by the @c parityList() function.
  */
-quint8 Serial::parityIndex() const
+quint8 IO::DataSources::Serial::parityIndex() const
 {
     return m_parityIndex;
 }
 
 /**
  * Returns the correspoding index of the data bits configuration in relation
- * to the @c QStringList returned by the @c dataBitsList() function.
+ * to the @c StringList returned by the @c dataBitsList() function.
  */
-quint8 Serial::dataBitsIndex() const
+quint8 IO::DataSources::Serial::dataBitsIndex() const
 {
     return m_dataBitsIndex;
 }
 
 /**
  * Returns the correspoding index of the stop bits configuration in relation
- * to the @c QStringList returned by the @c stopBitsList() function.
+ * to the @c StringList returned by the @c stopBitsList() function.
  */
-quint8 Serial::stopBitsIndex() const
+quint8 IO::DataSources::Serial::stopBitsIndex() const
 {
     return m_stopBitsIndex;
 }
 
 /**
  * Returns the correspoding index of the flow control config. in relation
- * to the @c QStringList returned by the @c flowControlList() function.
+ * to the @c StringList returned by the @c flowControlList() function.
  */
-quint8 Serial::flowControlIndex() const
+quint8 IO::DataSources::Serial::flowControlIndex() const
 {
     return m_flowControlIndex;
 }
@@ -164,7 +161,7 @@ quint8 Serial::flowControlIndex() const
  *       be "Select Serial Device". This is inteded to make the user interface
  *       a little more friendly.
  */
-QStringList Serial::portList() const
+StringList IO::DataSources::Serial::portList() const
 {
     return m_portList;
 }
@@ -173,9 +170,9 @@ QStringList Serial::portList() const
  * Returns a list with the available parity configurations.
  * This function can be used with a combo-box to build UIs.
  */
-QStringList Serial::parityList() const
+StringList IO::DataSources::Serial::parityList() const
 {
-    QStringList list;
+    StringList list;
     list.append(tr("None"));
     list.append(tr("Even"));
     list.append(tr("Odd"));
@@ -188,7 +185,7 @@ QStringList Serial::parityList() const
  * Returns a list with the available baud rate configurations.
  * This function can be used with a combo-box to build UIs.
  */
-QStringList Serial::baudRateList() const
+StringList IO::DataSources::Serial::baudRateList() const
 {
     return m_baudRateList;
 }
@@ -197,27 +194,27 @@ QStringList Serial::baudRateList() const
  * Returns a list with the available data bits configurations.
  * This function can be used with a combo-box to build UIs.
  */
-QStringList Serial::dataBitsList() const
+StringList IO::DataSources::Serial::dataBitsList() const
 {
-    return QStringList { "5", "6", "7", "8" };
+    return StringList { "5", "6", "7", "8" };
 }
 
 /**
  * Returns a list with the available stop bits configurations.
  * This function can be used with a combo-box to build UIs.
  */
-QStringList Serial::stopBitsList() const
+StringList IO::DataSources::Serial::stopBitsList() const
 {
-    return QStringList { "1", "1.5", "2" };
+    return StringList { "1", "1.5", "2" };
 }
 
 /**
  * Returns a list with the available flow control configurations.
  * This function can be used with a combo-box to build UIs.
  */
-QStringList Serial::flowControlList() const
+StringList IO::DataSources::Serial::flowControlList() const
 {
-    QStringList list;
+    StringList list;
     list.append(tr("None"));
     list.append("RTS/CTS");
     list.append("XON/XOFF");
@@ -228,7 +225,7 @@ QStringList Serial::flowControlList() const
  * Returns the current parity configuration used by the serial port
  * handler object.
  */
-QSerialPort::Parity Serial::parity() const
+QSerialPort::Parity IO::DataSources::Serial::parity() const
 {
     return m_parity;
 }
@@ -237,7 +234,7 @@ QSerialPort::Parity Serial::parity() const
  * Returns the current baud rate configuration used by the serial port
  * handler object.
  */
-qint32 Serial::baudRate() const
+qint32 IO::DataSources::Serial::baudRate() const
 {
     return m_baudRate;
 }
@@ -246,7 +243,7 @@ qint32 Serial::baudRate() const
  * Returns the current data bits configuration used by the serial port
  * handler object.
  */
-QSerialPort::DataBits Serial::dataBits() const
+QSerialPort::DataBits IO::DataSources::Serial::dataBits() const
 {
     return m_dataBits;
 }
@@ -255,7 +252,7 @@ QSerialPort::DataBits Serial::dataBits() const
  * Returns the current stop bits configuration used by the serial port
  * handler object.
  */
-QSerialPort::StopBits Serial::stopBits() const
+QSerialPort::StopBits IO::DataSources::Serial::stopBits() const
 {
     return m_stopBits;
 }
@@ -264,7 +261,7 @@ QSerialPort::StopBits Serial::stopBits() const
  * Returns the current flow control configuration used by the serial
  * port handler object.
  */
-QSerialPort::FlowControl Serial::flowControl() const
+QSerialPort::FlowControl IO::DataSources::Serial::flowControl() const
 {
     return m_flowControl;
 }
@@ -272,7 +269,7 @@ QSerialPort::FlowControl Serial::flowControl() const
 /**
  * Tries to open the serial port with the current configuration
  */
-QSerialPort *Serial::openSerialPort()
+QSerialPort *IO::DataSources::Serial::openSerialPort()
 {
     // Ignore the first item of the list (Select Port)
     auto ports = validPorts();
@@ -282,7 +279,8 @@ QSerialPort *Serial::openSerialPort()
         // Update port index variable & disconnect from current serial port
         disconnectDevice();
         m_portIndex = portId + 1;
-        emit portIndexChanged();
+        m_lastSerialDeviceIndex = m_portIndex;
+        Q_EMIT portIndexChanged();
 
         // Create new serial port handler
         m_port = new QSerialPort(ports.at(portId));
@@ -310,35 +308,29 @@ QSerialPort *Serial::openSerialPort()
 /**
  * Disconnects from the current serial device and clears temp. data
  */
-void Serial::disconnectDevice()
+void IO::DataSources::Serial::disconnectDevice()
 {
     // Check if serial port pointer is valid
-    if (port() != nullptr)
+    if (port() != Q_NULLPTR)
     {
-        // Get serial port name (used for warning messages)
-        auto name = portName();
-
         // Disconnect signals/slots
         port()->disconnect(this, SLOT(handleError(QSerialPort::SerialPortError)));
 
         // Close & delete serial port handler
         port()->close();
         port()->deleteLater();
-
-        // Log changes
-        LOG_INFO() << "Disconnected from" << name;
     }
 
     // Reset pointer
-    m_port = nullptr;
-    emit portChanged();
-    emit availablePortsChanged();
+    m_port = Q_NULLPTR;
+    Q_EMIT portChanged();
+    Q_EMIT availablePortsChanged();
 }
 
 /**
  * Changes the baud @a rate of the serial port
  */
-void Serial::setBaudRate(const qint32 rate)
+void IO::DataSources::Serial::setBaudRate(const qint32 rate)
 {
     // Asserts
     Q_ASSERT(rate > 10);
@@ -351,17 +343,14 @@ void Serial::setBaudRate(const qint32 rate)
         port()->setBaudRate(baudRate());
 
     // Update user interface
-    emit baudRateChanged();
-
-    // Log information
-    LOG_INFO() << "Baud rate set to" << rate;
+    Q_EMIT baudRateChanged();
 }
 
 /**
  * Changes the port index value, this value is later used by the @c openSerialPort()
  * function.
  */
-void Serial::setPortIndex(const quint8 portIndex)
+void IO::DataSources::Serial::setPortIndex(const quint8 portIndex)
 {
     auto portId = portIndex - 1;
     if (portId >= 0 && portId < validPorts().count())
@@ -369,14 +358,14 @@ void Serial::setPortIndex(const quint8 portIndex)
     else
         m_portIndex = 0;
 
-    emit portIndexChanged();
+    Q_EMIT portIndexChanged();
 }
 
 /**
- * @brief Serial::setParity
+ * @brief IO::DataSources::Serial::setParity
  * @param parityIndex
  */
-void Serial::setParity(const quint8 parityIndex)
+void IO::DataSources::Serial::setParity(const quint8 parityIndex)
 {
     // Argument verification
     Q_ASSERT(parityIndex < parityList().count());
@@ -402,9 +391,6 @@ void Serial::setParity(const quint8 parityIndex)
         case 4:
             m_parity = QSerialPort::MarkParity;
             break;
-        default:
-            m_parity = QSerialPort::UnknownParity;
-            break;
     }
 
     // Update serial port config.
@@ -412,22 +398,19 @@ void Serial::setParity(const quint8 parityIndex)
         port()->setParity(parity());
 
     // Notify user interface
-    emit parityChanged();
-
-    // Log changes
-    LOG_INFO() << "Serial port parity set to" << parity();
+    Q_EMIT parityChanged();
 }
 
 /**
  * Registers the new baud rate to the list
  */
-void Serial::appendBaudRate(const QString &baudRate)
+void IO::DataSources::Serial::appendBaudRate(const QString &baudRate)
 {
     if (!m_baudRateList.contains(baudRate))
     {
         m_baudRateList.append(baudRate);
         writeSettings();
-        emit baudRateListChanged();
+        Q_EMIT baudRateListChanged();
         Misc::Utilities::showMessageBox(
             tr("Baud rate registered successfully"),
             tr("Rate \"%1\" has been added to baud rate list").arg(baudRate));
@@ -440,7 +423,7 @@ void Serial::appendBaudRate(const QString &baudRate)
  * @note This function is meant to be used with a combobox in the
  *       QML interface
  */
-void Serial::setDataBits(const quint8 dataBitsIndex)
+void IO::DataSources::Serial::setDataBits(const quint8 dataBitsIndex)
 {
     // Argument verification
     Q_ASSERT(dataBitsIndex < dataBitsList().count());
@@ -463,9 +446,6 @@ void Serial::setDataBits(const quint8 dataBitsIndex)
         case 3:
             m_dataBits = QSerialPort::Data8;
             break;
-        default:
-            m_dataBits = QSerialPort::UnknownDataBits;
-            break;
     }
 
     // Update serial port configuration
@@ -473,10 +453,7 @@ void Serial::setDataBits(const quint8 dataBitsIndex)
         port()->setDataBits(dataBits());
 
     // Update user interface
-    emit dataBitsChanged();
-
-    // Log changes
-    LOG_INFO() << "Data bits set to" << dataBits();
+    Q_EMIT dataBitsChanged();
 }
 
 /**
@@ -485,7 +462,7 @@ void Serial::setDataBits(const quint8 dataBitsIndex)
  * @note This function is meant to be used with a combobox in the
  *       QML interface
  */
-void Serial::setStopBits(const quint8 stopBitsIndex)
+void IO::DataSources::Serial::setStopBits(const quint8 stopBitsIndex)
 {
     // Argument verification
     Q_ASSERT(stopBitsIndex < stopBitsList().count());
@@ -505,9 +482,6 @@ void Serial::setStopBits(const quint8 stopBitsIndex)
         case 2:
             m_stopBits = QSerialPort::TwoStop;
             break;
-        default:
-            m_stopBits = QSerialPort::UnknownStopBits;
-            break;
     }
 
     // Update serial port configuration
@@ -515,10 +489,16 @@ void Serial::setStopBits(const quint8 stopBitsIndex)
         port()->setStopBits(stopBits());
 
     // Update user interface
-    emit stopBitsChanged();
+    Q_EMIT stopBitsChanged();
+}
 
-    // Log changes
-    LOG_INFO() << "Stop bits set to" << stopBits();
+/**
+ * Enables or disables the auto-reconnect feature
+ */
+void IO::DataSources::Serial::setAutoReconnect(const bool autoreconnect)
+{
+    m_autoReconnect = autoreconnect;
+    Q_EMIT autoReconnectChanged();
 }
 
 /**
@@ -527,7 +507,7 @@ void Serial::setStopBits(const quint8 stopBitsIndex)
  * @note This function is meant to be used with a combobox in the
  *       QML interface
  */
-void Serial::setFlowControl(const quint8 flowControlIndex)
+void IO::DataSources::Serial::setFlowControl(const quint8 flowControlIndex)
 {
     // Argument verification
     Q_ASSERT(flowControlIndex < flowControlList().count());
@@ -547,9 +527,6 @@ void Serial::setFlowControl(const quint8 flowControlIndex)
         case 2:
             m_flowControl = QSerialPort::SoftwareControl;
             break;
-        case 3:
-            m_flowControl = QSerialPort::UnknownFlowControl;
-            break;
     }
 
     // Update serial port configuration
@@ -557,41 +534,26 @@ void Serial::setFlowControl(const quint8 flowControlIndex)
         port()->setFlowControl(flowControl());
 
     // Update user interface
-    emit flowControlChanged();
-
-    // Log changes
-    LOG_INFO() << "Flow control set to" << flowControl();
+    Q_EMIT flowControlChanged();
 }
 
 /**
- * Scans for new serial ports available & generates a QStringList with current
+ * Scans for new serial ports available & generates a StringList with current
  * serial ports.
  */
-void Serial::refreshSerialDevices()
+void IO::DataSources::Serial::refreshSerialDevices()
 {
     // Create device list, starting with dummy header
     // (for a more friendly UI when no devices are attached)
-    QStringList ports;
+    StringList ports;
     ports.append(tr("Select Port"));
 
     // Search for available ports and add them to the lsit
     auto validPortList = validPorts();
-    foreach (QSerialPortInfo info, validPortList)
+    Q_FOREACH (QSerialPortInfo info, validPortList)
     {
         if (!info.isNull())
-        {
-            // Get port name & description
-            auto name = info.portName();
-            auto description = info.description();
-
-            // Show port description
-            if (!description.isEmpty())
-                ports.append(description);
-
-            // Show port name
-            else
-                ports.append(name);
-        }
+            ports.append(info.portName());
     }
 
     // Update list only if necessary
@@ -615,31 +577,38 @@ void Serial::refreshSerialDevices()
             }
         }
 
+        // Auto reconnect
+        if (Manager::instance().dataSource() == Manager::DataSource::Serial)
+        {
+            if (autoReconnect() && m_lastSerialDeviceIndex > 0)
+            {
+                if (m_lastSerialDeviceIndex < portList().count())
+                {
+                    setPortIndex(m_lastSerialDeviceIndex);
+                    Manager::instance().connectDevice();
+                }
+            }
+        }
+
         // Update UI
-        emit availablePortsChanged();
+        Q_EMIT availablePortsChanged();
     }
 }
 
 /**
- * @brief Serial::handleError
+ * @brief IO::DataSources::Serial::handleError
  * @param error
  */
-void Serial::handleError(QSerialPort::SerialPortError error)
+void IO::DataSources::Serial::handleError(QSerialPort::SerialPortError error)
 {
-    LOG_INFO() << "Serial port error" << port()->error();
-
     if (error != QSerialPort::NoError)
-    {
-        auto errorStr = port()->errorString();
-        Manager::getInstance()->disconnectDevice();
-        Misc::Utilities::showMessageBox(tr("Serial port error"), errorStr);
-    }
+        Manager::instance().disconnectDevice();
 }
 
 /**
  * Read saved settings (if any)
  */
-void Serial::readSettings()
+void IO::DataSources::Serial::readSettings()
 {
     // Register standard baud rates
     QStringList stdBaudRates
@@ -647,10 +616,17 @@ void Serial::readSettings()
             "74880", "115200", "230400", "250000", "500000", "1000000", "2000000" };
 
     // Get value from settings
-    m_baudRateList = m_settings.value("IO_DataSource_Serial__BaudRates", stdBaudRates)
-                         .toStringList();
+    QStringList list;
+    list = m_settings.value("IO_DataSource_Serial__BaudRates", stdBaudRates)
+               .toStringList();
 
-    // Sort baud rate list
+    // Convert QStringList to QVector
+    m_baudRateList.clear();
+    for (int i = 0; i < list.count(); ++i)
+        m_baudRateList.append(list.at(i));
+
+        // Sort baud rate list
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     for (auto i = 0; i < m_baudRateList.count() - 1; ++i)
     {
         for (auto j = 0; j < m_baudRateList.count() - i - 1; ++j)
@@ -661,17 +637,19 @@ void Serial::readSettings()
                 m_baudRateList.swapItemsAt(j, j + 1);
         }
     }
+#endif
 
     // Notify UI
-    emit baudRateListChanged();
+    Q_EMIT baudRateListChanged();
 }
 
 /**
  * Save settings between application runs
  */
-void Serial::writeSettings()
+void IO::DataSources::Serial::writeSettings()
 {
     // Sort baud rate list
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     for (auto i = 0; i < m_baudRateList.count() - 1; ++i)
     {
         for (auto j = 0; j < m_baudRateList.count() - i - 1; ++j)
@@ -681,23 +659,29 @@ void Serial::writeSettings()
             if (a > b)
             {
                 m_baudRateList.swapItemsAt(j, j + 1);
-                emit baudRateListChanged();
+                Q_EMIT baudRateListChanged();
             }
         }
     }
+#endif
+
+    // Convert QVector to QStringList
+    QStringList list;
+    for (int i = 0; i < baudRateList().count(); ++i)
+        list.append(baudRateList().at(i));
 
     // Save list to memory
-    m_settings.setValue("IO_DataSource_Serial__BaudRates", baudRateList());
+    m_settings.setValue("IO_DataSource_Serial__BaudRates", list);
 }
 
 /**
  * Returns a list with all the valid serial port objects
  */
-QList<QSerialPortInfo> Serial::validPorts() const
+QVector<QSerialPortInfo> IO::DataSources::Serial::validPorts() const
 {
     // Search for available ports and add them to the list
-    QList<QSerialPortInfo> ports;
-    foreach (QSerialPortInfo info, QSerialPortInfo::availablePorts())
+    QVector<QSerialPortInfo> ports;
+    Q_FOREACH (QSerialPortInfo info, QSerialPortInfo::availablePorts())
     {
         if (!info.isNull())
         {
@@ -715,3 +699,7 @@ QList<QSerialPortInfo> Serial::validPorts() const
     // Return list
     return ports;
 }
+
+#ifdef SERIAL_STUDIO_INCLUDE_MOC
+#    include "moc_Serial.cpp"
+#endif

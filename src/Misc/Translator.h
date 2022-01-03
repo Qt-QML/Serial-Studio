@@ -20,12 +20,12 @@
  * THE SOFTWARE.
  */
 
-#ifndef TRANSLATOR_H
-#define TRANSLATOR_H
+#pragma once
 
 #include <QLocale>
 #include <QObject>
 #include <QTranslator>
+#include <DataTypes.h>
 
 #ifdef QT_QML_LIB
 #    include <QtQml>
@@ -33,6 +33,13 @@
 
 namespace Misc
 {
+/**
+ * @brief The Translator class
+ *
+ * The @c Translator module provides the user interface with a list of available
+ * translations, and loads the specified translation file during application startup or
+ * when the user changes the language of the application.
+ */
 class Translator : public QObject
 {
     // clang-format off
@@ -41,34 +48,37 @@ class Translator : public QObject
                READ language
                WRITE setLanguage
                NOTIFY languageChanged)
-    Q_PROPERTY(QStringList availableLanguages
+    Q_PROPERTY(StringList availableLanguages
                READ availableLanguages
                CONSTANT)
     // clang-format on
 
-signals:
+Q_SIGNALS:
     void languageChanged();
 
 private:
-    Translator();
+    explicit Translator();
+    Translator(Translator &&) = delete;
+    Translator(const Translator &) = delete;
+    Translator &operator=(Translator &&) = delete;
+    Translator &operator=(const Translator &) = delete;
 
 public:
-    static Translator *getInstance();
+    static Translator &instance();
 
     int language() const;
     int systemLanguage() const;
-    QStringList availableLanguages() const;
+    StringList availableLanguages() const;
     Q_INVOKABLE QString welcomeConsoleText() const;
     Q_INVOKABLE QString acknowledgementsText() const;
 
-public slots:
+public Q_SLOTS:
     void setLanguage(const int language);
     void setLanguage(const QLocale &locale, const QString &language);
 
 private:
     int m_language;
+    QSettings m_settings;
     QTranslator m_translator;
 };
 }
-
-#endif

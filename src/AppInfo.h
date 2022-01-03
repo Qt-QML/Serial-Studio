@@ -20,21 +20,12 @@
  * THE SOFTWARE.
  */
 
-#ifndef APP_INFO_H
-#define APP_INFO_H
-
-#include <QDir>
-#include <QString>
+#pragma once
 
 // clang-format off
-#define APP_VERSION     "1.0.21"
+#define APP_VERSION     "1.1.5"
 #define APP_DEVELOPER   "Alex Spataru"
 #define APP_NAME        "Serial Studio"
-#define APP_ICON        ":/images/icon.png"
 #define APP_SUPPORT_URL "https://github.com/serial-studio"
 #define APP_UPDATER_URL "https://raw.githubusercontent.com/Serial-Studio/Serial-Studio/master/updates.json"
-#define LOG_FORMAT      "[%{time}] %{message:-72} [%{TypeOne}] [%{function}]\n"
-#define LOG_FILE        QString("%1/%2.log").arg(QDir::tempPath(), APP_NAME)
 // clang-format on
-
-#endif

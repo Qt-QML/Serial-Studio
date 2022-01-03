@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
+import QtQuick 2.3
 import Qt.labs.platform 1.0
 
 MenuBar {
@@ -60,7 +60,7 @@ MenuBar {
             shortcut: "ctrl+o"
             text: qsTr("Replay CSV") + "..."
             onTriggered: Cpp_CSV_Player.openFile()
-            enabled: Cpp_JSON_Generator.operationMode == 0
+            enabled: Cpp_JSON_Generator.operationMode === 0
         }
 
         MenuSeparator {}
@@ -97,18 +97,18 @@ MenuBar {
         MenuItem {
             text: qsTr("Copy")
             shortcut: StandardKey.Copy
-            onTriggered: app.copyConsole()
+            onTriggered: mainWindow.consoleCopy()
         }
 
         MenuItem {
             shortcut: StandardKey.SelectAll
             text: qsTr("Select all") + "..."
-            onTriggered: app.selectAllConsole()
+            onTriggered: mainWindow.consoleSelectAll()
         }
 
         MenuItem {
             shortcut: StandardKey.Delete
-            onTriggered: app.clearConsole()
+            onTriggered: mainWindow.consoleClear()
             text: qsTr("Clear console output")
         }
 
@@ -120,14 +120,14 @@ MenuBar {
             MenuItem {
                 checkable: true
                 text: qsTr("Device sends JSON")
-                checked: Cpp_JSON_Generator.operationMode == 1
+                checked: Cpp_JSON_Generator.operationMode === 1
                 onTriggered: Cpp_JSON_Generator.operationMode = checked ? 1 : 0
             }
 
             MenuItem {
                 checkable: true
                 text: qsTr("Load JSON from computer")
-                checked: Cpp_JSON_Generator.operationMode == 0
+                checked: Cpp_JSON_Generator.operationMode === 0
                 onTriggered: Cpp_JSON_Generator.operationMode = checked ? 0 : 1
             }
         }
@@ -143,11 +143,11 @@ MenuBar {
             checkable: true
             shortcut: "ctrl+t"
             text: qsTr("Console")
-            checked: app.consoleVisible
-            onTriggered: app.showConsole()
+            checked: mainWindow.consoleVisible
+            onTriggered: mainWindow.showConsole()
             onCheckedChanged: {
-                if (app.consoleVisible !== checked)
-                    checked = app.consoleVisible
+                if (mainWindow.consoleVisible !== checked)
+                    checked = mainWindow.consoleVisible
             }
         }
 
@@ -155,25 +155,12 @@ MenuBar {
             checkable: true
             shortcut: "ctrl+d"
             text: qsTr("Dashboard")
-            checked: app.dashboardVisible
-            enabled: app.dashboardAvailable
-            onTriggered: app.showDashboard()
+            checked: mainWindow.dashboardVisible
+            enabled: Cpp_UI_Dashboard.available
+            onTriggered: mainWindow.showDashboard()
             onCheckedChanged: {
-                if (app.dashboardVisible !== checked)
-                    checked = app.dashboardVisible
-            }
-        }
-
-        MenuItem {
-            checkable: true
-            shortcut: "ctrl+w"
-            text: qsTr("Widgets")
-            checked: app.widgetsVisible
-            enabled: app.widgetsAvailable
-            onTriggered: app.showWidgets()
-            onCheckedChanged: {
-                if (app.widgetsVisible !== checked)
-                    checked = app.widgetsVisible
+                if (mainWindow.dashboardVisible !== checked)
+                    checked = mainWindow.dashboardVisible
             }
         }
 
@@ -182,17 +169,17 @@ MenuBar {
         MenuItem {
             checkable: true
             shortcut: "ctrl+,"
-            checked: app.setupVisible
+            checked: mainWindow.setupVisible
             text: qsTr("Show setup pane")
-            onTriggered: app.togglePreferences()
+            onTriggered: mainWindow.showSetup()
         }
 
         MenuSeparator {}
 
         DecentMenuItem {
             sequence: StandardKey.FullScreen
-            onTriggered: app.toggleFullscreen()
-            text: app.fullScreen ? qsTr("Exit full screen") : qsTr("Enter full screen")
+            onTriggered: mainWindow.toggleFullscreen()
+            text: mainWindow.fullScreen ? qsTr("Exit full screen") : qsTr("Enter full screen")
         }
     }
 
@@ -218,9 +205,9 @@ MenuBar {
 
         MenuItem {
             checkable: true
-            checked: app.vt100emulation
+            checked: mainWindow.vt100emulation
             text: qsTr("VT-100 emulation")
-            onTriggered: app.vt100emulation = checked
+            onTriggered: mainWindow.vt100emulation = checked
         }
 
         MenuItem {
@@ -238,14 +225,14 @@ MenuBar {
             MenuItem {
                 checkable: true
                 text: qsTr("Normal (plain text)")
-                checked: Cpp_IO_Console.displayMode == 0
+                checked: Cpp_IO_Console.displayMode === 0
                 onTriggered: Cpp_IO_Console.displayMode = checked ? 0 : 1
             }
 
             MenuItem {
                 checkable: true
                 text: qsTr("Binary (hexadecimal)")
-                checked: Cpp_IO_Console.displayMode == 1
+                checked: Cpp_IO_Console.displayMode === 1
                 onTriggered: Cpp_IO_Console.displayMode = checked ? 1 : 0
             }
         }
@@ -263,21 +250,21 @@ MenuBar {
             MenuItem {
                 checkable: true
                 text: Cpp_IO_Console.lineEndings()[1]
-                checked: Cpp_IO_Console.lineEnding == 1
+                checked: Cpp_IO_Console.lineEnding === 1
                 onTriggered: Cpp_IO_Console.lineEnding = 1
             }
 
             MenuItem {
                 checkable: true
                 text: Cpp_IO_Console.lineEndings()[2]
-                checked: Cpp_IO_Console.lineEnding == 2
+                checked: Cpp_IO_Console.lineEnding === 2
                 onTriggered: Cpp_IO_Console.lineEnding = 2
             }
 
             MenuItem {
                 checkable: true
                 text: Cpp_IO_Console.lineEndings()[3]
-                checked: Cpp_IO_Console.lineEnding == 3
+                checked: Cpp_IO_Console.lineEnding === 3
                 onTriggered: Cpp_IO_Console.lineEnding = 3
             }
         }
@@ -290,7 +277,7 @@ MenuBar {
         title: qsTr("Help")
 
         MenuItem {
-            onTriggered: app.showAbout()
+            onTriggered: app.aboutDialog.show()
             text: qsTr("About %1").arg(Cpp_AppName)
         }
 
@@ -308,8 +295,8 @@ MenuBar {
             checkable: true
             visible: Cpp_UpdaterEnabled
             enabled: Cpp_UpdaterEnabled
-            checked: app.automaticUpdates
-            onTriggered: app.automaticUpdates = checked
+            checked: mainWindow.automaticUpdates
+            onTriggered: mainWindow.automaticUpdates = checked
             text: qsTr("Auto-updater")
         }
 
@@ -334,11 +321,6 @@ MenuBar {
         }
 
         MenuSeparator{}
-
-        MenuItem {
-            text: qsTr("Show log file") + "..."
-            onTriggered: Cpp_Misc_Utilities.openLogFile()
-        }
 
         MenuItem {
             text: qsTr("Report bug") + "..."

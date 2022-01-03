@@ -20,9 +20,9 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.3
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 
 Page {
     id: root
@@ -40,19 +40,24 @@ Page {
     property int radius: root.borderWidth + 2
     property color titleColor: palette.brightText
     property color borderColor: palette.highlight
-    property color backgroundColor: Qt.darker(palette.base)
+    property bool altButtonEnabled: false
+    property alias altButtonIcon: altBt.icon
     property alias headerDoubleClickEnabled: headerMouseArea.enabled
-    property color gradientColor: root.gradient ? "#058ca7" : root.borderColor
+    property color backgroundColor: Cpp_ThemeManager.widgetWindowBackground
+    property color gradientColor1: root.gradient ? Cpp_ThemeManager.windowGradient1 :
+                                                   root.borderColor
+    property color gradientColor2: root.gradient ? Cpp_ThemeManager.windowGradient2 :
+                                                   root.borderColor
 
     //
     // Signals
     //
+    signal altButtonClicked()
     signal headerDoubleClicked()
 
     //
     // Animations
     //
-    Behavior on opacity {NumberAnimation{}}
     Behavior on Layout.preferredWidth {NumberAnimation{}}
     Behavior on Layout.preferredHeight {NumberAnimation{}}
 
@@ -70,7 +75,16 @@ Page {
         radius: root.radius
         color: root.backgroundColor
         border.width: root.borderWidth
-        border.color: root.gradientColor
+        border.color: root.gradientColor1
+
+        Rectangle {
+            border.width: 1
+            color: "transparent"
+            anchors.fill: parent
+            anchors.topMargin: header.height
+            anchors.margins: root.borderWidth
+            border.color: Cpp_ThemeManager.border
+        }
     }
 
     //
@@ -85,18 +99,18 @@ Page {
         gradient: Gradient {
             GradientStop {
                 position: 0
-                color: root.borderColor
+                color: root.gradientColor1
             }
 
             GradientStop {
                 position: 1
-                color: root.gradientColor
+                color: root.gradientColor2
             }
         }
 
         Rectangle {
             z: 5
-            color: root.gradientColor
+            color: root.gradientColor1
             height: root.gradient ? 1 : parent.radius
 
             anchors {
@@ -107,8 +121,8 @@ Page {
         }
 
         MouseArea {
+            z: 2
             id: headerMouseArea
-            hoverEnabled: true
             anchors.fill: parent
             onDoubleClicked: root.headerDoubleClicked()
 
@@ -116,33 +130,23 @@ Page {
                 if (mouse.x >= headerBt.x && mouse.x <= headerBt.x + headerBt.width)
                     root.headerDoubleClicked()
             }
-
-            onContainsMouseChanged: {
-                if (containsMouse)
-                    headerBt.opacity = 1
-                else
-                    headerBt.opacity = 0
-            }
         }
 
         RowLayout {
             spacing: 0
             anchors.fill: parent
 
-            ToolButton {
+            Icon {
                 id: _bt
-                z: 1
-                flat: true
-                enabled: false
-                icon.color: root.titleColor
+                color: root.titleColor
+                source: "qrc:/icons/widget.svg"
                 Layout.alignment: Qt.AlignVCenter
                 Layout.maximumHeight: parent.height
                 Layout.minimumHeight: parent.height
                 Layout.minimumWidth: root.headerHeight
                 Layout.maximumWidth: root.headerHeight
-                icon.source: "qrc:/icons/equalizer.svg"
-                icon.width: root.headerHeight * 24 / 32
-                icon.height: root.headerHeight * 24 / 32
+                icon.width: root.headerHeight * 20 / 32
+                icon.height: root.headerHeight * 20 / 32
             }
 
             Label {
@@ -155,22 +159,35 @@ Page {
                 horizontalAlignment: root.showIcon ? Label.AlignLeft : Label.AlignHCenter
             }
 
-            Button {
+            Icon {
                 id: headerBt
-                flat: true
-                opacity: 0
-                enabled: false
-                icon.color: root.titleColor
-                icon.source: "qrc:/icons/open.svg"
+                color: root.titleColor
                 Layout.alignment: Qt.AlignVCenter
                 Layout.maximumHeight: parent.height
                 Layout.minimumHeight: parent.height
-                onClicked: root.headerDoubleClicked()
+                icon.source: "qrc:/icons/expand.svg"
                 Layout.minimumWidth: root.headerHeight
                 Layout.maximumWidth: root.headerHeight
-                icon.width: root.headerHeight * 24 / 32
-                icon.height: root.headerHeight * 24 / 32
-                Behavior on opacity {NumberAnimation{}}
+                visible: root.headerDoubleClickEnabled
+                icon.width: root.headerHeight * 20 / 32
+                icon.height: root.headerHeight * 20 / 32
+            }
+
+            Button {
+                id: altBt
+                flat: true
+                enabled: visible
+                icon.color: root.titleColor
+                visible: root.altButtonEnabled
+                Layout.alignment: Qt.AlignVCenter
+                onClicked: root.altButtonClicked()
+                Layout.maximumHeight: parent.height
+                Layout.minimumHeight: parent.height
+                Layout.minimumWidth: root.headerHeight
+                Layout.maximumWidth: root.headerHeight
+                icon.width: root.headerHeight * 20 / 32
+                icon.height: root.headerHeight * 20 / 32
+                background: Item {}
             }
         }
     }

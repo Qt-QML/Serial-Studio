@@ -22,9 +22,10 @@
 
 #include <QtQml>
 #include <QSysInfo>
+#include <QQuickStyle>
 #include <QApplication>
+#include <QStyleFactory>
 
-#include <Logger.h>
 #include <AppInfo.h>
 #include <JSON/Frame.h>
 #include <Misc/Utilities.h>
@@ -39,7 +40,7 @@
  */
 static void cliShowVersion()
 {
-    auto appver = QString("%1 version %2").arg(APP_NAME).arg(APP_VERSION);
+    auto appver = QString("%1 version %2").arg(APP_NAME, APP_VERSION);
     auto author = QString("Written by Alex Spataru <https://github.com/alex-spataru>");
 
     qDebug() << appver.toStdString().c_str();
@@ -80,7 +81,9 @@ int main(int argc, char **argv)
 #endif
 
     // Set application attributes
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
     // Init. application
     QApplication app(argc, argv);
@@ -88,6 +91,10 @@ int main(int argc, char **argv)
     app.setApplicationVersion(APP_VERSION);
     app.setOrganizationName(APP_DEVELOPER);
     app.setOrganizationDomain(APP_SUPPORT_URL);
+
+    // Set application style
+    app.setStyle(QStyleFactory::create("Fusion"));
+    QQuickStyle::setStyle("Fusion");
 
     // Read arguments
     QString arguments;
@@ -110,32 +117,19 @@ int main(int argc, char **argv)
         }
     }
 
-    // Create module manager & configure the logger
-    ModuleManager moduleManager;
-    moduleManager.configureLogger();
-
-    // Configure dark UI
-    Misc::Utilities::configureDarkUi();
-
-    // Begin logging
-    LOG_INFO() << QDateTime::currentDateTime();
-    LOG_INFO() << APP_NAME << APP_VERSION;
-    LOG_INFO() << "Running on" << QSysInfo::prettyProductName().toStdString().c_str();
+    // Create module manager
+    Misc::ModuleManager moduleManager;
+    moduleManager.configureUpdater();
 
     // Initialize QML interface
     moduleManager.registerQmlTypes();
     moduleManager.initializeQmlInterface();
     if (moduleManager.engine()->rootObjects().isEmpty())
     {
-        LOG_FATAL() << "Critical QML error";
+        qCritical() << "Critical QML error";
         return EXIT_FAILURE;
     }
 
-    // Configure the updater
-    moduleManager.configureUpdater();
-
     // Enter application event loop
-    auto code = app.exec();
-    LOG_INFO() << "Application exit code" << code;
-    return code;
+    return app.exec();
 }

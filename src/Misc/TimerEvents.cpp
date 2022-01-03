@@ -20,68 +20,53 @@
  * THE SOFTWARE.
  */
 
-#include "TimerEvents.h"
-
-#include <QtMath>
-#include <Logger.h>
-#include <ConsoleAppender.h>
-
-using namespace Misc;
-#define HZ_TO_MS(x) qCeil(1000 / x)
-
-/**
- * Pointer to the only instance of the class
- */
-static TimerEvents *INSTANCE = nullptr;
-
-/**
- * Constructor function
- */
-TimerEvents::TimerEvents()
-{
-    // Configure timeout intevals
-    m_timer1Hz.setInterval(HZ_TO_MS(1));
-    m_timer42Hz.setInterval(HZ_TO_MS(42));
-
-    // Configure timer precision
-    m_timer1Hz.setTimerType(Qt::PreciseTimer);
-    m_timer42Hz.setTimerType(Qt::PreciseTimer);
-
-    // Configure signals/slots
-    connect(&m_timer1Hz, &QTimer::timeout, this, &TimerEvents::timeout1Hz);
-    connect(&m_timer42Hz, &QTimer::timeout, this, &TimerEvents::timeout42Hz);
-    LOG_TRACE() << "Class initialized";
-}
+#include <QTimerEvent>
+#include <Misc/TimerEvents.h>
 
 /**
  * Returns a pointer to the only instance of the class
  */
-TimerEvents *TimerEvents::getInstance()
+Misc::TimerEvents &Misc::TimerEvents::instance()
 {
-    if (!INSTANCE)
-        INSTANCE = new TimerEvents;
-
-    return INSTANCE;
+    static TimerEvents singleton;
+    return singleton;
 }
 
 /**
  * Stops all the timers of this module
  */
-void TimerEvents::stopTimers()
+void Misc::TimerEvents::stopTimers()
 {
     m_timer1Hz.stop();
-    m_timer42Hz.stop();
+    m_timer10Hz.stop();
+    m_timer20Hz.stop();
+}
 
-    LOG_INFO() << "Timers stopped";
+/**
+ * Emits the @c timeout signal when the basic timer expires
+ */
+void Misc::TimerEvents::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == m_timer1Hz.timerId())
+        Q_EMIT timeout1Hz();
+
+    else if (event->timerId() == m_timer10Hz.timerId())
+        Q_EMIT timeout10Hz();
+
+    else if (event->timerId() == m_timer20Hz.timerId())
+        Q_EMIT timeout20Hz();
 }
 
 /**
  * Starts all the timer of the module
  */
-void TimerEvents::startTimers()
+void Misc::TimerEvents::startTimers()
 {
-    m_timer1Hz.start();
-    m_timer42Hz.start();
-
-    LOG_TRACE() << "Timers started";
+    m_timer20Hz.start(50, this);
+    m_timer10Hz.start(100, this);
+    m_timer1Hz.start(1000, this);
 }
+
+#ifdef SERIAL_STUDIO_INCLUDE_MOC
+#    include "moc_TimerEvents.cpp"
+#endif

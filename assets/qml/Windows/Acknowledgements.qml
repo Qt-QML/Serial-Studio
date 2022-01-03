@@ -20,34 +20,64 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
-import QtQuick.Window 2.0
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.3
+import QtQuick.Window 2.3
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 
-Window {
+import "../FramelessWindow" as FramelessWindow
+
+FramelessWindow.CustomWindow {
     id: root
 
     //
     // Window options
     //
+    width: minimumWidth
+    height: minimumHeight
+    minimizeEnabled: false
+    maximizeEnabled: false
     title: qsTr("Acknowledgements")
-    minimumWidth: column.implicitWidth + 4 * app.spacing
-    maximumWidth: column.implicitWidth + 4 * app.spacing
-    minimumHeight: column.implicitHeight + 4 * app.spacing
-    maximumHeight: column.implicitHeight + 4 * app.spacing
-    flags: Qt.Dialog | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
+    titlebarText: Cpp_ThemeManager.text
+    x: (Screen.desktopAvailableWidth - width) / 2
+    y: (Screen.desktopAvailableHeight - height) / 2
+    titlebarColor: Cpp_ThemeManager.dialogBackground
+    backgroundColor: Cpp_ThemeManager.dialogBackground
+    minimumWidth: column.implicitWidth + 4 * app.spacing + 2 * root.shadowMargin
+    maximumWidth: column.implicitWidth + 4 * app.spacing + 2 * root.shadowMargin
+    extraFlags: Qt.WindowStaysOnTopHint | Qt.Dialog | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
+    minimumHeight: column.implicitHeight + 4 * app.spacing + titlebar.height + 2 * root.shadowMargin
+    maximumHeight: column.implicitHeight + 4 * app.spacing + titlebar.height + 2 * root.shadowMargin
 
     //
     // Use page item to set application palette
     //
     Page {
-        anchors.margins: 0
-        anchors.fill: parent
-        palette.text: "#fff"
-        palette.buttonText: "#fff"
-        palette.windowText: "#fff"
-        palette.window: app.windowBackgroundColor
+        anchors {
+            fill: parent
+            margins: root.shadowMargin
+            topMargin: titlebar.height + root.shadowMargin
+        }
+
+        palette.text: Cpp_ThemeManager.text
+        palette.buttonText: Cpp_ThemeManager.text
+        palette.windowText: Cpp_ThemeManager.text
+        palette.window: Cpp_ThemeManager.dialogBackground
+        background: Rectangle {
+            radius: root.radius
+            color: root.backgroundColor
+
+            Rectangle {
+                height: root.radius
+                color: root.backgroundColor
+
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                }
+            }
+        }
 
         //
         // Window controls

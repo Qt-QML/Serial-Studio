@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en" sourcelanguage="en">
+<TS version="2.1" language="en_US" sourcelanguage="en_US">
 <context>
     <name>About</name>
     <message>
@@ -13,10 +13,6 @@
     </message>
     <message>
         <source>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Contact author</source>
         <translation></translation>
     </message>
     <message>
@@ -43,27 +39,8 @@
         <source>Acknowledgements</source>
         <translation></translation>
     </message>
-</context>
-<context>
-    <name>AccelerometerDelegate</name>
     <message>
-        <source>G Units</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 G MAX</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 G MIN</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 G ACT</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Reset</source>
+        <source>Make a donation</source>
         <translation></translation>
     </message>
 </context>
@@ -147,51 +124,7 @@
 <context>
     <name>Console</name>
     <message>
-        <source>Send data to device</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Echo</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Autoscroll</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Show timestamp</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Clear</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Save as</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Select all</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>No data received so far</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Print</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Hide menubar</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Show menubar</source>
+        <source>Console</source>
         <translation></translation>
     </message>
 </context>
@@ -207,34 +140,32 @@
     </message>
 </context>
 <context>
-    <name>DataGrid</name>
+    <name>Dashboard</name>
     <message>
-        <source>View</source>
+        <source>Console</source>
         <translation></translation>
     </message>
+</context>
+<context>
+    <name>DashboardTitle</name>
+    <message>
+        <source>Console</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>DataGrid</name>
     <message>
         <source>Horizontal Range</source>
-        <translation>Horizontal range</translation>
+        <translation type="vanished">Horizontal range</translation>
     </message>
     <message>
         <source>Data Groups</source>
-        <translation>Data groups</translation>
+        <translation type="vanished">Data groups</translation>
     </message>
     <message>
         <source>Data Plots</source>
-        <translation>Data plots</translation>
-    </message>
-    <message>
-        <source>Data</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Points</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Scale</source>
-        <translation></translation>
+        <translation type="vanished">Data plots</translation>
     </message>
 </context>
 <context>
@@ -262,6 +193,37 @@
     <message>
         <source>Flow Control</source>
         <translation type="vanished">Flow control</translation>
+    </message>
+</context>
+<context>
+    <name>Donate</name>
+    <message>
+        <source>Donate</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Later</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Support the development of %1!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Serial Studio is free &amp; open-source software supported by volunteers. Consider donating to support development efforts :)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>You can also support this project by sharing it, reporting bugs and proposing new features!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Don&apos;t annoy me again!</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -399,17 +361,48 @@
     </message>
 </context>
 <context>
-    <name>GyroDelegate</name>
+    <name>Footer</name>
     <message>
-        <source>%1° YAW</source>
+        <source>Close</source>
         <translation></translation>
     </message>
     <message>
-        <source>%1° ROLL</source>
+        <source>Add group</source>
         <translation></translation>
     </message>
     <message>
-        <source>%1° PITCH</source>
+        <source>Open existing project...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Create new project</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Header</name>
+    <message>
+        <source>Project title (required)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Data separator (default is &apos;,&apos;)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Frame start sequence (default is &apos;%1&apos;)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Frame end sequence (default is &apos;%1&apos;)</source>
         <translation></translation>
     </message>
 </context>
@@ -505,10 +498,6 @@
         <source>Select Port</source>
         <translation>Select port</translation>
     </message>
-    <message>
-        <source>Serial port error</source>
-        <translation></translation>
-    </message>
 </context>
 <context>
     <name>IO::Manager</name>
@@ -518,6 +507,153 @@
     </message>
     <message>
         <source>Network port</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>JSON::Editor</name>
+    <message>
+        <source>Dataset widgets</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Accelerometer</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Gyroscope</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Gauge</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Bar/level</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Compass</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>New Project</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Do you want to save your changes?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>You have unsaved modifications in this project!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Project error</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Project title cannot be empty!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Project error - Group %1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Group title cannot be empty!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Project error - Group %1, Dataset %2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dataset title cannot be empty!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Warning - Group %1, Dataset %2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dataset contains duplicate frame index position! Continue?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Save JSON project</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>File open error</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Select JSON file</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>New Group</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Delete group &quot;%1&quot;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete this group?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to change the group-level widget?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Existing datasets for this group will be deleted</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Accelerometer %1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Gyro %1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>New dataset</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Delete dataset &quot;%1&quot;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete this dataset?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Multiple data plot</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Altitude</source>
         <translation></translation>
     </message>
 </context>
@@ -536,19 +672,144 @@
         <translation></translation>
     </message>
     <message>
-        <source>JSON map file loaded successfully!</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>File &quot;%1&quot; loaded into memory</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Cannot read JSON file</source>
         <translation></translation>
     </message>
     <message>
         <source>Please check file permissions &amp; location</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>JSONDropArea</name>
+    <message>
+        <source>Drop JSON and CSV files here</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>JsonDatasetDelegate</name>
+    <message>
+        <source>Dataset %1 - %2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Sensor reading, uptime, etc...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Units:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Volts, meters, seconds, etc...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Frame index:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Widget:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Min value:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Max value:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Generate plot:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Logarithmic plot:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>FFT plot:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>FFT Samples:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alarm level:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Note:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>The compass widget expects values from 0° to 360°.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Display LED:</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>JsonEditor</name>
+    <message>
+        <source>JSON Editor - %1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Start something awesome</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Click on the &quot;Add group&quot; button to begin</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>JsonGroupDelegate</name>
+    <message>
+        <source>Group %1 - %2</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Add dataset</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Note:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>The accelerometer widget expects values in m/s².</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>The gyroscope widget expects values in degrees (0° to 360°).</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>KLed</name>
+    <message>
+        <source>LED on</source>
+        <comment>Accessible name of a Led whose state is on</comment>
+        <translation></translation>
+    </message>
+    <message>
+        <source>LED off</source>
+        <comment>Accessible name of a Led whose state is off</comment>
         <translation></translation>
     </message>
 </context>
@@ -599,7 +860,11 @@
         <translation></translation>
     </message>
     <message>
-        <source>Connect</source>
+        <source>Advanced setup</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Connect to broker</source>
         <translation></translation>
     </message>
 </context>
@@ -741,11 +1006,131 @@
         <source>MQTT client error</source>
         <translation></translation>
     </message>
+    <message>
+        <source>0: At most once</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>1: At least once</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>2: Exactly once</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>System default</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Select CA file</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Cannot open CA file!</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MQTT client SSL/TLS error, ignore?</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
-    <name>MapDelegate</name>
+    <name>MQTTConfiguration</name>
     <message>
-        <source>Center on coordinate</source>
+        <source>MQTT Configuration</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>QOS level</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Keep alive (s)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Host</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Topic</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Retain</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MQTT topic</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Add retain flag</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MQTT username</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>MQTT password</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Enable SSL/TLS:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Certificate:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Use system database</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Custom CA file</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Protocol:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>CA file:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Apply</source>
         <translation></translation>
     </message>
 </context>
@@ -824,19 +1209,7 @@
         <translation></translation>
     </message>
     <message>
-        <source>Widgets</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Show setup pane</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Hide menubar</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Show menubar</source>
         <translation></translation>
     </message>
     <message>
@@ -901,10 +1274,6 @@
     </message>
     <message>
         <source>Documentation/wiki</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Show log file</source>
         <translation></translation>
     </message>
     <message>
@@ -991,10 +1360,6 @@
         <translation></translation>
     </message>
     <message>
-        <source>Widgets</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Show setup pane</source>
         <translation></translation>
     </message>
@@ -1063,15 +1428,67 @@
         <translation></translation>
     </message>
     <message>
-        <source>Show log file</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Report bug</source>
         <translation></translation>
     </message>
     <message>
         <source>Print</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Misc::MacExtras</name>
+    <message>
+        <source>Setup</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Console</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dashboard</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Misc::ModuleManager</name>
+    <message>
+        <source>Initializing...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Configuring updater...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Initializing modules...</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Loading user interface...</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Misc::ThemeManager</name>
+    <message>
+        <source>The theme change will take effect after restart</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Do you want to restart %1 now?</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Misc::Utilities</name>
+    <message>
+        <source>Check for updates automatically?</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Should %1 automatically check for updates? You can always check for updates manually from the &quot;Help&quot; menu</source>
         <translation></translation>
     </message>
 </context>
@@ -1086,12 +1503,28 @@
         <translation></translation>
     </message>
     <message>
-        <source>Host</source>
+        <source>Multicast</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Remote address</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Local port</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Type 0 for automatic port</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Remote port</source>
         <translation></translation>
     </message>
 </context>
 <context>
-    <name>Plugins::Bridge</name>
+    <name>Plugins::Server</name>
     <message>
         <source>Unable to start plugin TCP server</source>
         <translation></translation>
@@ -1109,6 +1542,36 @@
     <name>QObject</name>
     <message>
         <source>Failed to load welcome text :(</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>QwtPlotRenderer</name>
+    <message>
+        <source>Documents</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Export File Name</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>QwtPolarRenderer</name>
+    <message>
+        <source>Documents</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Export File Name</source>
         <translation></translation>
     </message>
 </context>
@@ -1137,6 +1600,10 @@
     <message>
         <source>Flow Control</source>
         <translation>Flow control</translation>
+    </message>
+    <message>
+        <source>Auto-reconnect</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1172,28 +1639,24 @@
         <source>Applications/plugins can interact with %1 by establishing a TCP connection on port 7777.</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Theme</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Data separator</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Multithreaded frame parsing</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>Setup</name>
     <message>
         <source>Communication Mode</source>
         <translation>Communication mode</translation>
-    </message>
-    <message>
-        <source>Auto (JSON from serial device)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Manual (use JSON map file)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Change map file (%1)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Select map file</source>
-        <translation></translation>
     </message>
     <message>
         <source>COM Port</source>
@@ -1235,15 +1698,74 @@
         <source>MQTT</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Setup</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>No parsing (device sends JSON data)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Parse via JSON project file</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Change project file (%1)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Select project file</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Terminal</name>
+    <message>
+        <source>Copy</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>No data received so far</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Send data to device</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Echo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Autoscroll</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Show timestamp</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>Toolbar</name>
     <message>
         <source>Console</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Widgets</source>
         <translation></translation>
     </message>
     <message>
@@ -1264,6 +1786,31 @@
     </message>
     <message>
         <source>Connect</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>JSON Editor</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>TreeView</name>
+    <message>
+        <source>JSON Project Tree</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>UI::Dashboard</name>
+    <message>
+        <source>Status Panel</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>UI::WidgetLoader</name>
+    <message>
+        <source>Invalid</source>
         <translation></translation>
     </message>
 </context>
@@ -1291,17 +1838,105 @@
     </message>
 </context>
 <context>
-    <name>main</name>
+    <name>ViewOptions</name>
     <message>
-        <source>Check for updates automatically?</source>
+        <source>View</source>
         <translation></translation>
     </message>
     <message>
-        <source>Drop JSON and CSV files here</source>
+        <source>Datasets</source>
         <translation></translation>
     </message>
     <message>
-        <source>Should %1 automatically check for updates? You can always check for updates manually from the &quot;Help&quot; menu</source>
+        <source>Multiple data plots</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>FFT plots</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Data plots</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Bars</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Gauges</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Compasses</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Gyroscopes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Accelerometers</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>GPS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>LED Panels</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Points:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Visualization options</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Decimal places:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Widget size:</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>WidgetGrid</name>
+    <message>
+        <source>Data</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::FFTPlot</name>
+    <message>
+        <source>Samples</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>FFT of %1</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::MultiPlot</name>
+    <message>
+        <source>Unknown</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Samples</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::Plot</name>
+    <message>
+        <source>Samples</source>
         <translation></translation>
     </message>
 </context>

@@ -20,54 +20,57 @@
  * THE SOFTWARE.
  */
 
-#ifndef JSON_GROUP_H
-#define JSON_GROUP_H
+#pragma once
 
 #include <QVector>
-#include <QObject>
-#include <QVariant>
-#include <QJsonArray>
-#include <QJsonObject>
+#include <JSON/Dataset.h>
 
-#include "Dataset.h"
+namespace UI
+{
+class Dashboard;
+}
 
 namespace JSON
 {
-class Group : public QObject
+/**
+ * @brief The Group class
+ *
+ * The group class represents a set of datasets that are related
+ * together (e.g. they correspond to the same category).
+ *
+ * Some special widgets, such as the accelerometer, the map or
+ * the gyroscope are generated using groups instead of datasets.
+ * For example, an accelerometer widget is constructed with a group
+ * with the following datasets:
+ *
+ * - X-axis readings
+ * - Y-axis readings
+ * - Z-axis readings
+ *
+ * A group contains the following properties:
+ * - Title
+ * - Widget
+ * - A vector of datasets
+ */
+class Group
 {
-    // clang-format off
-    Q_OBJECT
-    Q_PROPERTY(QString title
-               READ title
-               CONSTANT)
-    Q_PROPERTY(QString widget
-               READ widget
-               CONSTANT)
-    Q_PROPERTY(int datasetCount
-               READ datasetCount
-               CONSTANT)
-    Q_PROPERTY(QVector<Dataset*> datasets
-               READ datasets
-               CONSTANT)
-    // clang-format on
-
 public:
-    Group(QObject *parent = nullptr);
     ~Group();
 
     QString title() const;
     QString widget() const;
     int datasetCount() const;
-    QVector<Dataset *> datasets() const;
+    QVector<Dataset> &datasets();
     bool read(const QJsonObject &object);
 
-    Q_INVOKABLE Dataset *getDataset(const int index);
+    Q_INVOKABLE const JSON::Dataset &getDataset(const int index) const;
 
 private:
     QString m_title;
     QString m_widget;
-    QVector<Dataset *> m_datasets;
+    QVector<Dataset> m_datasets;
+
+    friend class Editor;
+    friend class UI::Dashboard;
 };
 }
-
-#endif

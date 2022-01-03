@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-#include "Player.h"
-
 #include <QtMath>
 #include <QFileDialog>
 #include <QApplication>
@@ -29,55 +27,34 @@
 #include <qtcsv/stringdata.h>
 #include <qtcsv/reader.h>
 
-#include <QJsonValue>
-#include <QJsonArray>
-#include <QJsonObject>
-
-#include <Logger.h>
-#include <ConsoleAppender.h>
-
+#include <CSV/Player.h>
 #include <IO/Manager.h>
 #include <Misc/Utilities.h>
-#include <JSON/Generator.h>
-
-using namespace CSV;
-
-//
-// Here be dragons...
-//
-
-/*
- * Only instance of the class
- */
-static Player *INSTANCE = nullptr;
 
 /**
  * Constructor function
  */
-Player::Player()
+CSV::Player::Player()
     : m_framePos(0)
     , m_playing(false)
     , m_timestamp("")
 {
     connect(this, SIGNAL(playerStateChanged()), this, SLOT(updateData()));
-    LOG_TRACE() << "Class initialized";
 }
 
 /**
  * Returns the only instance of the class
  */
-Player *Player::getInstance()
+CSV::Player &CSV::Player::instance()
 {
-    if (!INSTANCE)
-        INSTANCE = new Player;
-
-    return INSTANCE;
+    static Player singleton;
+    return singleton;
 }
 
 /**
  * Returns @c true if an CSV file is open for reading
  */
-bool Player::isOpen() const
+bool CSV::Player::isOpen() const
 {
     return m_csvFile.isOpen();
 }
@@ -85,7 +62,7 @@ bool Player::isOpen() const
 /**
  * Returns the CSV playback progress in a range from 0.0 to 1.0
  */
-qreal Player::progress() const
+qreal CSV::Player::progress() const
 {
     return ((qreal)framePosition()) / frameCount();
 }
@@ -94,7 +71,7 @@ qreal Player::progress() const
  * Returns @c true if the user is currently re-playing the CSV file at real-time
  * speed.
  */
-bool Player::isPlaying() const
+bool CSV::Player::isPlaying() const
 {
     return m_playing;
 }
@@ -102,7 +79,7 @@ bool Player::isPlaying() const
 /**
  * Returns the short filename of the current CSV file
  */
-QString Player::filename() const
+QString CSV::Player::filename() const
 {
     if (isOpen())
     {
@@ -118,7 +95,7 @@ QString Player::filename() const
  * by getting the number of rows of the CSV and substracting 1 (because the
  * title cells do not count as a valid frame).
  */
-int Player::frameCount() const
+int CSV::Player::frameCount() const
 {
     return m_csvData.count() - 1;
 }
@@ -127,7 +104,7 @@ int Player::frameCount() const
  * Returns the current row that we are using to create the JSON data that is
  * feed to the JsonParser class.
  */
-int Player::framePosition() const
+int CSV::Player::framePosition() const
 {
     return m_framePos;
 }
@@ -135,79 +112,101 @@ int Player::framePosition() const
 /**
  * Returns the timestamp of the current data frame / row.
  */
-QString Player::timestamp() const
+QString CSV::Player::timestamp() const
 {
     return m_timestamp;
+}
+
+/**
+ * Returns the default path for CSV files
+ */
+QString CSV::Player::csvFilesPath() const
+{
+    // Get file name and path
+    // clang-format off
+    QString path = QString("%1/Documents/%2/CSV/").arg(QDir::homePath(),
+                                                       qApp->applicationName());
+    // clang-format on
+
+    // Generate file path if required
+    QDir dir(path);
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    return path;
 }
 
 /**
  * Enables CSV playback at 'live' speed (as it happened when CSV file was
  * saved to the computer).
  */
-void Player::play()
+void CSV::Player::play()
 {
     m_playing = true;
-    emit playerStateChanged();
+    Q_EMIT playerStateChanged();
 }
 
 /**
  * Pauses the CSV playback so that the user can see WTF happened at
  * certain point of the mission.
  */
-void Player::pause()
+void CSV::Player::pause()
 {
     m_playing = false;
-    emit playerStateChanged();
+    Q_EMIT playerStateChanged();
 }
 
 /**
  * Toggles play/pause state
  */
-void Player::toggle()
+void CSV::Player::toggle()
 {
     m_playing = !m_playing;
-    emit playerStateChanged();
+    Q_EMIT playerStateChanged();
 }
 
 /**
  * Lets the user select a CSV file
  */
-void Player::openFile()
+void CSV::Player::openFile()
 {
+    // clang-format off
+
     // Get file name
     auto file = QFileDialog::getOpenFileName(
-        Q_NULLPTR, tr("Select CSV file"), QDir::homePath(), tr("CSV files") + " (*.csv)");
+                Q_NULLPTR,
+                tr("Select CSV file"),
+                csvFilesPath(),
+                tr("CSV files") + " (*.csv)");
 
     // Open CSV file
     if (!file.isEmpty())
         openFile(file);
+
+    // clang-format on
 }
 
 /**
  * Closes the file & cleans up internal variables. This helps us to reduice
  * memory usage & prepare the module to load another CSV file.
  */
-void Player::closeFile()
+void CSV::Player::closeFile()
 {
     m_framePos = 0;
-    m_model.clear();
     m_csvFile.close();
     m_csvData.clear();
     m_playing = false;
-    m_datasetIndexes.clear();
     m_timestamp = "--.--";
 
-    emit openChanged();
-    emit timestampChanged();
-    emit playerStateChanged();
-
-    LOG_INFO() << "CSV file closed";
+    Q_EMIT openChanged();
+    Q_EMIT timestampChanged();
+    Q_EMIT playerStateChanged();
 }
 
 /**
  * Reads & processes the next CSV row (until we get to the last row)
  */
-void Player::nextFrame()
+void CSV::Player::nextFrame()
 {
     if (framePosition() < frameCount())
     {
@@ -219,7 +218,7 @@ void Player::nextFrame()
 /**
  * Reads & processes the previous CSV row (until we get to the first row)
  */
-void Player::previousFrame()
+void CSV::Player::previousFrame()
 {
     if (framePosition() > 0)
     {
@@ -233,20 +232,8 @@ void Player::previousFrame()
  * row. If one of the data rows does not correspond to the title row, the CSV
  * is considered to be invalid.
  */
-void Player::openFile(const QString &filePath)
+void CSV::Player::openFile(const QString &filePath)
 {
-    // Check that manual JSON mode is activaded
-    auto opMode = JSON::Generator::getInstance()->operationMode();
-    auto jsonOpen = !JSON::Generator::getInstance()->jsonMapData().isEmpty();
-    if (opMode != JSON::Generator::kManual || !jsonOpen)
-    {
-        Misc::Utilities::showMessageBox(
-            tr("Invalid configuration for CSV player"),
-            tr("You need to select a JSON map file in order to use "
-               "this feature"));
-        return;
-    }
-
     // File name empty, abort
     if (filePath.isEmpty())
         return;
@@ -255,33 +242,40 @@ void Player::openFile(const QString &filePath)
     closeFile();
 
     // Device is connected, warn user & disconnect
-    auto sm = IO::Manager::getInstance();
-    if (sm->connected())
+    if (IO::Manager::instance().connected())
     {
-        LOG_TRACE() << "Serial device open, asking user what to do...";
         auto response = Misc::Utilities::showMessageBox(
             tr("Serial port open, do you want to continue?"),
             tr("In order to use this feature, its necessary "
                "to disconnect from the serial port"),
             qAppName(), QMessageBox::No | QMessageBox::Yes);
         if (response == QMessageBox::Yes)
-            sm->disconnectDevice();
+            IO::Manager::instance().disconnectDevice();
         else
             return;
     }
 
     // Try to open the current file
     m_csvFile.setFileName(filePath);
-    LOG_INFO() << "Trying to open CSV file...";
     if (m_csvFile.open(QIODevice::ReadOnly))
     {
         // Read CSV file into string matrix
-        LOG_INFO() << "CSV file read, processing CSV data...";
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        QVector<QString> row;
+        auto csv = QtCSV::Reader::readToList(m_csvFile);
+        for (int i = 0; i < csv.count(); ++i)
+        {
+            row.clear();
+            for (int j = 0; j < csv.at(i).count(); ++j)
+                row.append(csv[i][j]);
+
+            m_csvData.append(row);
+        }
+#else
         m_csvData = QtCSV::Reader::readToList(m_csvFile);
+#endif
 
         // Validate CSV file (brutality works sometimes)
-        LOG_INFO() << "CSV frame count" << frameCount();
-        LOG_INFO() << "Validating CSV file...";
         bool valid = true;
         for (int i = 1; i < frameCount(); ++i)
         {
@@ -289,14 +283,13 @@ void Player::openFile(const QString &filePath)
             if (!valid)
                 break;
         }
-        LOG_INFO() << "CSV valid:" << valid;
 
         // Read first row & update UI
         if (valid)
         {
-            // Read first data & emit UI signals
+            // Read first data & Q_EMIT UI signals
             updateData();
-            emit openChanged();
+            Q_EMIT openChanged();
 
             // Play next frame (to force UI to generate groups, graphs & widgets)
             // Note: nextFrame() MUST BE CALLED AFTER emiting the openChanged() signal in
@@ -317,7 +310,6 @@ void Player::openFile(const QString &filePath)
     // Open error
     else
     {
-        LOG_TRACE() << "CSV file read error" << m_csvFile.errorString();
         Misc::Utilities::showMessageBox(tr("Cannot read CSV file"),
                                         tr("Please check file permissions & location"));
         closeFile();
@@ -328,7 +320,7 @@ void Player::openFile(const QString &filePath)
  * Reads a specific row from the @a progress range (which can have a value
  * ranging from 0.0 to 1.0).
  */
-void Player::setProgress(const qreal progress)
+void CSV::Player::setProgress(const qreal &progress)
 {
     // Ensure that progress value is between 0 and 1
     auto validProgress = progress;
@@ -360,26 +352,23 @@ void Player::setProgress(const qreal progress)
  * milliseconds between the current row and the next row & schedules a re-call
  * of this function using a timer.
  */
-void Player::updateData()
+void CSV::Player::updateData()
 {
     // File not open, abort
     if (!isOpen())
         return;
 
     // Update timestamp string
-    bool error;
-    auto timestamp = getCellValue(framePosition() + 1, 0, &error);
+    bool error = true;
+    auto timestamp = getCellValue(framePosition() + 1, 0, error);
     if (!error)
     {
         m_timestamp = timestamp;
-        emit timestampChanged();
+        Q_EMIT timestampChanged();
     }
 
-    // Construct JSON from CSV & instruct the parser to use this document as
-    // input source for the QML bridge
-    auto json = getJsonFrame(framePosition() + 1);
-    if (!json.isEmpty())
-        JSON::Generator::getInstance()->loadJSON(json);
+    // Construct frame from CSV and send it to the IO manager
+    IO::Manager::instance().processPayload(getFrame(framePosition() + 1));
 
     // If the user wants to 'play' the CSV, get time difference between this
     // frame and the next frame & schedule an automated update
@@ -388,9 +377,9 @@ void Player::updateData()
         // Get first frame
         if (framePosition() < frameCount())
         {
-            bool error = false;
-            auto currTime = getCellValue(framePosition() + 1, 0, &error);
-            auto nextTime = getCellValue(framePosition() + 2, 0, &error);
+            bool error = true;
+            auto currTime = getCellValue(framePosition() + 1, 0, error);
+            auto nextTime = getCellValue(framePosition() + 2, 0, error);
 
             // No error, calculate difference & schedule update
             if (!error)
@@ -399,24 +388,26 @@ void Player::updateData()
                 auto currDateTime = QDateTime::fromString(currTime, format);
                 auto nextDateTime = QDateTime::fromString(nextTime, format);
                 auto msecsToNextF = currDateTime.msecsTo(nextDateTime);
-                QTimer::singleShot(msecsToNextF, Qt::PreciseTimer, this,
+
+                // clang-format off
+                QTimer::singleShot(msecsToNextF,
+                                   Qt::PreciseTimer,
+                                   this,
                                    SLOT(nextFrame()));
+                // clang-format on
             }
 
             // Error - pause playback
             else
             {
                 pause();
-                LOG_WARNING() << "Error getting timestamp difference";
+                qWarning() << "Error getting timestamp difference";
             }
         }
 
         // Pause at end of CSV
         else
-        {
             pause();
-            LOG_INFO() << "CSV playback finished";
-        }
     }
 }
 
@@ -426,7 +417,7 @@ void Player::updateData()
  * validation by checking that the timestamp cell has the correct title as the
  * one used in the @c Export class.
  */
-bool Player::validateRow(const int position)
+bool CSV::Player::validateRow(const int position)
 {
     // Ensure that position is valid
     if (m_csvData.count() <= position)
@@ -439,7 +430,7 @@ bool Player::validateRow(const int position)
     // Check that row value count is the same
     if (titles.count() != list.count())
     {
-        LOG_WARNING() << "Mismatched CSV data on frame" << framePosition();
+        qWarning() << "Mismatched CSV data on frame" << framePosition();
         closeFile();
         return false;
     }
@@ -449,7 +440,7 @@ bool Player::validateRow(const int position)
     auto rxTitle = "RX Date/Time";
     if (titles.first() != rxTitle)
     {
-        LOG_WARNING() << "Invalid CSV file (title format does not match)";
+        qWarning() << "Invalid CSV file (title format does not match)";
         closeFile();
         return false;
     }
@@ -459,146 +450,29 @@ bool Player::validateRow(const int position)
 }
 
 /**
- * Generates a JSON data frame by combining the values of the current CSV
- * row & the structure of the JSON map file loaded in the @c JsonParser class.
- *
- * The details of how this is done are a bit fuzzy, and the methods used here
- * are pretty ugly & unorthodox, but they work. Brutality works.
+ * Generates a frame from the data at the given @a row. The first item of each row is
+ * ignored because it contains the RX date/time, which is used to regulate the interval
+ * at which the frames are parsed.
  */
-QJsonDocument Player::getJsonFrame(const int row)
+QByteArray CSV::Player::getFrame(const int row)
 {
-    // Create the group/dataset model only one time
-    if (m_model.isEmpty())
+    QByteArray frame;
+    auto sep = IO::Manager::instance().separatorSequence();
+
+    if (m_csvData.count() > row)
     {
-        LOG_TRACE() << "Generating group/dataset model from CSV...";
-
-        auto titles = m_csvData.at(0);
-        for (int i = 1; i < titles.count(); ++i)
+        auto list = m_csvData.at(row);
+        for (int i = 1; i < list.count(); ++i)
         {
-            // Construct group string
-            QString group;
-            auto title = titles.at(i);
-            auto glist = title.split(")");
-            for (int j = 0; j < glist.count() - 1; ++j)
-                group.append(glist.at(j));
-
-            // Remove the '(' from group name
-            if (!group.isEmpty())
-                group.remove(0, 1);
-
-            // Get dataset name & remove units
-            QString dataset = glist.last();
-            if (dataset.endsWith("]"))
-            {
-                while (!dataset.endsWith("["))
-                    dataset.chop(1);
-            }
-
-            // Remove extra spaces from dataset
-            while (dataset.startsWith(" "))
-                dataset.remove(0, 1);
-            while (dataset.endsWith(" ") || dataset.endsWith("["))
-                dataset.chop(1);
-
-            // Register group with dataset map
-            if (!m_model.contains(group))
-            {
-                QSet<QString> set;
-                set.insert(dataset);
-                m_model.insert(group, set);
-            }
-
-            // Update existing group/dataset model
-            else if (!m_model.value(group).contains(dataset))
-            {
-                auto set = m_model.value(group);
-                if (!set.contains(dataset))
-                    set.insert(dataset);
-
-                m_model.remove(group);
-                m_model.insert(group, set);
-            }
-
-            // Register dataset index with group key
-            if (!m_datasetIndexes.contains(group))
-            {
-                QMap<QString, int> map;
-                map.insert(dataset, i);
-                m_datasetIndexes.insert(group, map);
-            }
-
-            // Register dataset index with existing group key
+            frame.append(list.at(i).toUtf8());
+            if (i < list.count() - 1)
+                frame.append(sep.toUtf8());
             else
-            {
-                auto map = m_datasetIndexes.value(group);
-                map.insert(dataset, i);
-                m_datasetIndexes.remove(group);
-                m_datasetIndexes.insert(group, map);
-            }
-        }
-
-        LOG_TRACE() << "Group/dataset model created successfully";
-    }
-
-    // Check that row is valid
-    if (m_csvData.count() <= row)
-    {
-        LOG_WARNING() << "Invalid row requested";
-        return QJsonDocument();
-    }
-
-    // Read CSV row & JSON template from JSON parser
-    auto values = m_csvData.at(row);
-    auto mapData = JSON::Generator::getInstance()->jsonMapData();
-    QJsonDocument jsonTemplate = QJsonDocument::fromJson(mapData.toUtf8());
-
-    // Replace JSON title
-    auto json = jsonTemplate.object();
-    json["t"] = tr("Replay of %1").arg(filename());
-
-    // Replace values in JSON  with values in row using the model.
-    // This is very ugly code, somebody please fix it :(
-    auto groups = json.value("g").toArray();
-    foreach (auto groupKey, m_model.keys())
-    {
-        for (int i = 0; i < groups.count(); ++i)
-        {
-            auto group = groups.at(i).toObject();
-
-            if (group.value("t") == groupKey)
-            {
-                auto datasetKeys = m_model.value(groupKey);
-                auto datasets = group.value("d").toArray();
-                foreach (auto datasetKey, datasetKeys)
-                {
-                    for (int j = 0; j < datasets.count(); ++j)
-                    {
-                        auto dataset = datasets.at(j).toObject();
-                        if (dataset.value("t") == datasetKey)
-                        {
-                            auto value = values.at(getDatasetIndex(groupKey, datasetKey));
-                            dataset.remove("v");
-                            dataset.insert("v", value);
-                        }
-
-                        datasets.replace(j, dataset);
-                    }
-                }
-
-                group.remove("d");
-                group.insert("d", datasets);
-            }
-
-            groups.replace(i, group);
+                frame.append('\n');
         }
     }
 
-    // Update groups from JSON
-    json.remove("g");
-    json.insert("g", groups);
-
-    // Return new JSON document
-    return QJsonDocument(json);
+    return frame;
 }
 
 /**
@@ -606,38 +480,22 @@ QJsonDocument Player::getJsonFrame(const int row)
  * error occurs or the cell does not exist, the value of @a error shall be set
  * to @c true.
  */
-QString Player::getCellValue(int row, int column, bool *error)
+QString CSV::Player::getCellValue(const int row, const int column, bool &error)
 {
     if (m_csvData.count() > row)
     {
         auto list = m_csvData.at(row);
         if (list.count() > column)
         {
-            if (error)
-                *error = false;
-
+            error = false;
             return list.at(column);
         }
     }
 
-    if (error)
-        *error = true;
-
+    error = true;
     return "";
 }
 
-/**
- * Returns the column/index for the dataset key that belongs to the given
- * group key.
- */
-int Player::getDatasetIndex(const QString &groupKey, const QString &datasetKey)
-{
-    if (m_datasetIndexes.contains(groupKey))
-    {
-        auto map = m_datasetIndexes.value(groupKey);
-        if (map.contains(datasetKey))
-            return map.value(datasetKey);
-    }
-
-    return 0;
-}
+#ifdef SERIAL_STUDIO_INCLUDE_MOC
+#    include "moc_Player.cpp"
+#endif

@@ -20,14 +20,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef IO_DATA_SOURCES_SERIAL_H
-#define IO_DATA_SOURCES_SERIAL_H
+#pragma once
+
+#include <DataTypes.h>
 
 #include <QObject>
 #include <QString>
 #include <QSettings>
 #include <QByteArray>
-#include <QStringList>
 #include <QtSerialPort>
 #include <QTextCursor>
 #include <QQuickTextDocument>
@@ -36,6 +36,11 @@ namespace IO
 {
 namespace DataSources
 {
+/**
+ * @brief The Network class
+ *
+ * Serial Studio "driver" class to interact with serial port devices.
+ */
 class Serial : public QObject
 {
     // clang-format off
@@ -43,7 +48,10 @@ class Serial : public QObject
     Q_PROPERTY(QString portName
                READ portName
                NOTIFY portChanged)
-
+    Q_PROPERTY(bool autoReconnect
+               READ autoReconnect
+               WRITE setAutoReconnect
+               NOTIFY autoReconnectChanged)
     Q_PROPERTY(quint8 portIndex
                READ portIndex
                WRITE setPortIndex
@@ -68,27 +76,27 @@ class Serial : public QObject
                READ baudRate
                WRITE setBaudRate
                NOTIFY baudRateChanged)
-    Q_PROPERTY(QStringList portList
+    Q_PROPERTY(StringList portList
                READ portList
                NOTIFY availablePortsChanged)
-    Q_PROPERTY(QStringList parityList
+    Q_PROPERTY(StringList parityList
                READ parityList
                CONSTANT)
-    Q_PROPERTY(QStringList baudRateList
+    Q_PROPERTY(StringList baudRateList
                READ baudRateList
                NOTIFY baudRateListChanged)
-    Q_PROPERTY(QStringList dataBitsList
+    Q_PROPERTY(StringList dataBitsList
                READ dataBitsList
                CONSTANT)
-    Q_PROPERTY(QStringList stopBitsList
+    Q_PROPERTY(StringList stopBitsList
                READ stopBitsList
                CONSTANT)
-    Q_PROPERTY(QStringList flowControlList
+    Q_PROPERTY(StringList flowControlList
                READ flowControlList
                CONSTANT)
     // clang-format on
 
-signals:
+Q_SIGNALS:
     void portChanged();
     void parityChanged();
     void baudRateChanged();
@@ -97,15 +105,26 @@ signals:
     void portIndexChanged();
     void flowControlChanged();
     void baudRateListChanged();
+    void autoReconnectChanged();
     void baudRateIndexChanged();
     void availablePortsChanged();
     void connectionError(const QString &name);
 
+private:
+    explicit Serial();
+    Serial(Serial &&) = delete;
+    Serial(const Serial &) = delete;
+    Serial &operator=(Serial &&) = delete;
+    Serial &operator=(const Serial &) = delete;
+
+    ~Serial();
+
 public:
-    static Serial *getInstance();
+    static Serial &instance();
 
     QString portName() const;
     QSerialPort *port() const;
+    bool autoReconnect() const;
     bool configurationOk() const;
 
     quint8 portIndex() const;
@@ -115,12 +134,12 @@ public:
     quint8 stopBitsIndex() const;
     quint8 flowControlIndex() const;
 
-    QStringList portList() const;
-    QStringList parityList() const;
-    QStringList baudRateList() const;
-    QStringList dataBitsList() const;
-    QStringList stopBitsList() const;
-    QStringList flowControlList() const;
+    StringList portList() const;
+    StringList parityList() const;
+    StringList baudRateList() const;
+    StringList dataBitsList() const;
+    StringList stopBitsList() const;
+    StringList flowControlList() const;
 
     qint32 baudRate() const;
     QSerialPort::Parity parity() const;
@@ -130,7 +149,7 @@ public:
 
     QSerialPort *openSerialPort();
 
-public slots:
+public Q_SLOTS:
     void disconnectDevice();
     void setBaudRate(const qint32 rate);
     void setParity(const quint8 parityIndex);
@@ -138,21 +157,23 @@ public slots:
     void appendBaudRate(const QString &baudRate);
     void setDataBits(const quint8 dataBitsIndex);
     void setStopBits(const quint8 stopBitsIndex);
+    void setAutoReconnect(const bool autoreconnect);
     void setFlowControl(const quint8 flowControlIndex);
 
-private slots:
+private Q_SLOTS:
     void readSettings();
     void writeSettings();
     void refreshSerialDevices();
     void handleError(QSerialPort::SerialPortError error);
 
 private:
-    Serial();
-    ~Serial();
-    QList<QSerialPortInfo> validPorts() const;
+    QVector<QSerialPortInfo> validPorts() const;
 
 private:
     QSerialPort *m_port;
+
+    bool m_autoReconnect;
+    int m_lastSerialDeviceIndex;
 
     qint32 m_baudRate;
     QSettings m_settings;
@@ -167,10 +188,8 @@ private:
     quint8 m_stopBitsIndex;
     quint8 m_flowControlIndex;
 
-    QStringList m_portList;
-    QStringList m_baudRateList;
+    StringList m_portList;
+    StringList m_baudRateList;
 };
 }
 }
-
-#endif

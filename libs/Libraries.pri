@@ -24,14 +24,38 @@
 # Definitions to avoid adding DLL imports/exports
 #-------------------------------------------------------------------------------
 
-DEFINES += CUTELOGGER_SRC
 DEFINES += QTCSV_STATIC_LIB
+
+#-------------------------------------------------------------------------------
+# Fix MSVC math constants redefinition warning
+#-------------------------------------------------------------------------------
+
+DEFINES += _USE_MATH_DEFINES
+
+#-------------------------------------------------------------------------------
+# Useful hack for the unity build
+#-------------------------------------------------------------------------------
+
+INCLUDEPATH += $$PWD
 
 #-------------------------------------------------------------------------------
 # Include *.pri files
 #-------------------------------------------------------------------------------
 
+include($$PWD/qwt/qwt.pri)
 include($$PWD/qtcsv/qtcsv.pri)
 include($$PWD/qmqtt/qmqtt.pri)
-include($$PWD/CuteLogger/CuteLogger.pri)
+include($$PWD/QMapControl/QMapControl.pri)
+include($$PWD/QRealFourier/QRealFourier.pri)
 include($$PWD/QSimpleUpdater/QSimpleUpdater.pri)
+
+macx* {
+    DEFINES += KDMACTOUCHBAR_BUILD_KDMACTOUCHBAR_SRC
+    LIBS += -framework Cocoa
+    INCLUDEPATH += $$PWD/KDMacTouchBar/src
+    SOURCES += \
+        $$PWD/KDMacTouchBar/src/kdmactouchbar.mm
+    HEADERS += \
+        $$PWD/KDMacTouchBar/src/kdmactouchbar.h \
+        $$PWD/KDMacTouchBar/src/kdmactouchbar_global.h
+}

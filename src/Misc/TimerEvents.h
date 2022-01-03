@@ -20,36 +20,50 @@
  * THE SOFTWARE.
  */
 
-#ifndef MISC_TIMER_EVENTS_H
-#define MISC_TIMER_EVENTS_H
+#pragma once
 
-#include <QTimer>
 #include <QObject>
+#include <QBasicTimer>
 
 namespace Misc
 {
+/**
+ * @brief The TimerEvents class
+ *
+ * The @c TimerEvents class implements periodic timers that are used to update
+ * the user interface elements at a specific frequency.
+ */
 class TimerEvents : public QObject
 {
+    // clang-format off
     Q_OBJECT
+    // clang-format on
 
-signals:
+Q_SIGNALS:
     void timeout1Hz();
-    void timeout42Hz();
+    void timeout10Hz();
+    void timeout20Hz();
+
+private:
+    TimerEvents() {};
+    TimerEvents(TimerEvents &&) = delete;
+    TimerEvents(const TimerEvents &) = delete;
+    TimerEvents &operator=(TimerEvents &&) = delete;
+    TimerEvents &operator=(const TimerEvents &) = delete;
 
 public:
-    static TimerEvents *getInstance();
+    static TimerEvents &instance();
 
-public slots:
+protected:
+    void timerEvent(QTimerEvent *event) override;
+
+public Q_SLOTS:
     void stopTimers();
     void startTimers();
 
 private:
-    TimerEvents();
-
-private:
-    QTimer m_timer1Hz;
-    QTimer m_timer42Hz;
+    QBasicTimer m_timer1Hz;
+    QBasicTimer m_timer10Hz;
+    QBasicTimer m_timer20Hz;
 };
 }
-
-#endif

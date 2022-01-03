@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef DATASET_H
-#define DATASET_H
+#pragma once
 
 #include <QObject>
 #include <QVariant>
@@ -29,50 +28,79 @@
 
 namespace JSON
 {
-class Dataset : public QObject
+/**
+ * @brief The Dataset class
+ *
+ * The dataset class represents the properties and values of an
+ * individual data unit.
+ *
+ * For example, supose that you are reading the values of a temperature
+ * sensor. In this case, the dataset could have the following values:
+ *
+ * - Value: 21
+ * - Units: °C
+ * - Title: External temperature
+ * - Widget: "bar"
+ * - Graph: true
+ * - Max: 100
+ * - Min: -15
+ * - Alarm: 45
+ *
+ * Description for each field of the dataset class:
+ * - Value: represents the current sensor reading/value.
+ * - Units: represents the measurement units of the reading.
+ * - Title: description of the dataset.
+ * - Widget: widget that shall be used to represents the value,
+ *           for example, a level widget, a gauge, a compass, etc.
+ * - Graph: if set to true, Serial Studio shall plot the value in
+ *          realtime.
+ * - Max: maximum value of the dataset, used for gauges & bars.
+ * - Min: minimum value of the dataset, used for gauges & bars.
+ * - Alarm: if the value exceeds the alarm level, bar widgets
+ *          shall be rendered with a dark-red background.
+ *
+ * @note All of the dataset fields are optional, except the "value"
+ *       field and the "title" field.
+ */
+class Dataset
 {
-    // clang-format off
-    Q_OBJECT
-    Q_PROPERTY(bool graph
-               READ graph
-               CONSTANT)
-    Q_PROPERTY(QString title
-               READ title
-               CONSTANT)
-    Q_PROPERTY(QString value
-               READ value
-               CONSTANT)
-    Q_PROPERTY(QString units
-               READ units
-               CONSTANT)
-    Q_PROPERTY(QString widget
-               READ widget
-               CONSTANT)
-    Q_PROPERTY(QJsonObject jsonData
-               READ jsonData
-               CONSTANT)
-    // clang-format on
-
 public:
-    Dataset(QObject *parent = nullptr);
+    Dataset();
 
+    bool fft() const;
+    bool led() const;
+    bool log() const;
     bool graph() const;
+    double min() const;
+    double max() const;
+    double alarm() const;
     QString title() const;
     QString value() const;
     QString units() const;
     QString widget() const;
+    int fftSamples() const;
     QJsonObject jsonData() const;
 
     bool read(const QJsonObject &object);
 
 private:
+    bool m_fft;
+    bool m_led;
+    bool m_log;
     bool m_graph;
+
     QString m_title;
     QString m_value;
     QString m_units;
     QString m_widget;
     QJsonObject m_jsonData;
+
+    // Editor-related variables
+    int m_index;
+    double m_max;
+    double m_min;
+    double m_alarm;
+    int m_fftSamples;
+    friend class Editor;
 };
 }
-
-#endif

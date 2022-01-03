@@ -20,33 +20,21 @@
  * THE SOFTWARE.
  */
 
-#include "Group.h"
-#include "Dataset.h"
-
-using namespace JSON;
-
-Group::Group(QObject *parent)
-    : QObject(parent)
-    , m_title("")
-    , m_widget("")
-{
-}
+#include <QJsonArray>
+#include <JSON/Group.h>
 
 /**
  * Destructor function
  */
-Group::~Group()
+JSON::Group::~Group()
 {
-    for (int i = 0; i < datasetCount(); ++i)
-        m_datasets.at(i)->deleteLater();
-
     m_datasets.clear();
 }
 
 /**
  * @return The title/description of this group
  */
-QString Group::title() const
+QString JSON::Group::title() const
 {
     return m_title;
 }
@@ -54,7 +42,7 @@ QString Group::title() const
 /**
  * @return The widget type of this group (if any)
  */
-QString Group::widget() const
+QString JSON::Group::widget() const
 {
     return m_widget;
 }
@@ -62,15 +50,15 @@ QString Group::widget() const
 /**
  * @return The number of datasets inside this group
  */
-int Group::datasetCount() const
+int JSON::Group::datasetCount() const
 {
-    return datasets().count();
+    return m_datasets.count();
 }
 
 /**
  * @return A list with all the dataset objects contained in this group
  */
-QVector<Dataset *> Group::datasets() const
+QVector<JSON::Dataset> &JSON::Group::datasets()
 {
     return m_datasets;
 }
@@ -78,12 +66,9 @@ QVector<Dataset *> Group::datasets() const
 /**
  * @return The dataset at the given @a index,vreturns @c Q_NULLPTR on invalid index
  */
-Dataset *Group::getDataset(const int index)
+const JSON::Dataset &JSON::Group::getDataset(const int index) const
 {
-    if (index < datasetCount() && index >= 0)
-        return m_datasets.at(index);
-
-    return Q_NULLPTR;
+    return m_datasets.at(index);
 }
 
 /**
@@ -92,18 +77,13 @@ Dataset *Group::getDataset(const int index)
  *
  * @return @c true on success, @c false on failure
  */
-bool Group::read(const QJsonObject &object)
+bool JSON::Group::read(const QJsonObject &object)
 {
     if (!object.isEmpty())
     {
-        auto array = object.value("d").toArray();
-        auto title = object.value("t").toVariant().toString();
-        auto widget = object.value("w").toVariant().toString();
-
-        title = title.replace("\n", "");
-        title = title.replace("\r", "");
-        widget = widget.replace("\n", "");
-        widget = widget.replace("\r", "");
+        auto title = object.value("title").toString();
+        auto array = object.value("datasets").toArray();
+        auto widget = object.value("widget").toString();
 
         if (!title.isEmpty() && !array.isEmpty())
         {
@@ -116,11 +96,9 @@ bool Group::read(const QJsonObject &object)
                 auto object = array.at(i).toObject();
                 if (!object.isEmpty())
                 {
-                    Dataset *dataset = new Dataset(this);
-                    if (dataset->read(object))
+                    Dataset dataset;
+                    if (dataset.read(object))
                         m_datasets.append(dataset);
-                    else
-                        dataset->deleteLater();
                 }
             }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de" sourcelanguage="en">
+<TS version="2.1" language="de_DE" sourcelanguage="en_US">
 <context>
     <name>About</name>
     <message>
@@ -17,7 +17,7 @@
     </message>
     <message>
         <source>Contact author</source>
-        <translation>Autor kontaktieren</translation>
+        <translation type="vanished">Autor kontaktieren</translation>
     </message>
     <message>
         <source>Report bug</source>
@@ -51,28 +51,20 @@
         <source>Acknowledgements</source>
         <translation>Danksagung</translation>
     </message>
+    <message>
+        <source>Make a donation</source>
+        <translation>Spenden</translation>
+    </message>
 </context>
 <context>
     <name>AccelerometerDelegate</name>
     <message>
         <source>G Units</source>
-        <translation>G Einheiten</translation>
-    </message>
-    <message>
-        <source>%1 G MAX</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 G MIN</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 G ACT</source>
-        <translation></translation>
+        <translation type="vanished">G Einheiten</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <translation type="vanished">Zurücksetzen</translation>
     </message>
 </context>
 <context>
@@ -84,6 +76,21 @@
     <message>
         <source>Close</source>
         <translation>Schließen</translation>
+    </message>
+</context>
+<context>
+    <name>Application</name>
+    <message>
+        <source>Check for updates automatically?</source>
+        <translation type="vanished">Automatish auf Updates prüfen?</translation>
+    </message>
+    <message>
+        <source>Should %1 automatically check for updates? You can always check for updates manually from the &quot;Help&quot; menu</source>
+        <translation type="vanished">Soll %1 Automatish auf Updates prüfen? Sie können jederzeit manuell über das Menü &quot;Hilfe&quot; nach Updates suchen</translation>
+    </message>
+    <message>
+        <source>Drop JSON and CSV files here</source>
+        <translation type="vanished">JSON und CSV Dateien hierher Ziehen</translation>
     </message>
 </context>
 <context>
@@ -160,51 +167,55 @@
     </message>
     <message>
         <source>Send data to device</source>
-        <translation>Daten an das Gerät senden</translation>
+        <translation type="vanished">Daten an das Gerät senden</translation>
     </message>
     <message>
         <source>Echo</source>
-        <translation>Echo</translation>
+        <translation type="vanished">Echo</translation>
     </message>
     <message>
         <source>Autoscroll</source>
-        <translation>Auto Scroll</translation>
+        <translation type="vanished">Auto Scroll</translation>
     </message>
     <message>
         <source>Show timestamp</source>
-        <translation>Zeitstempel anzeigen</translation>
+        <translation type="vanished">Zeitstempel anzeigen</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation>Kopieren</translation>
+        <translation type="vanished">Kopieren</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Löschen</translation>
+        <translation type="vanished">Löschen</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation>Speichern als</translation>
+        <translation type="vanished">Speichern als</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation>Alles auswählen</translation>
+        <translation type="vanished">Alles auswählen</translation>
     </message>
     <message>
         <source>No data received so far</source>
-        <translation>Noch keine Daten verfügbar</translation>
+        <translation type="vanished">Noch keine Daten verfügbar</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Drucken</translation>
+        <translation type="vanished">Drucken</translation>
     </message>
     <message>
         <source>Hide menubar</source>
-        <translation>Menüleiste ausblenden</translation>
+        <translation type="vanished">Menüleiste ausblenden</translation>
     </message>
     <message>
         <source>Show menubar</source>
-        <translation>Menüleiste anzeigen</translation>
+        <translation type="vanished">Menüleiste anzeigen</translation>
+    </message>
+    <message>
+        <source>Console</source>
+        <translation>Konsole</translation>
     </message>
 </context>
 <context>
@@ -259,34 +270,48 @@
     </message>
 </context>
 <context>
+    <name>Dashboard</name>
+    <message>
+        <source>Console</source>
+        <translation>Konsole</translation>
+    </message>
+</context>
+<context>
+    <name>DashboardTitle</name>
+    <message>
+        <source>Console</source>
+        <translation>Konsole</translation>
+    </message>
+</context>
+<context>
     <name>DataGrid</name>
     <message>
         <source>View</source>
-        <translation>Ansicht</translation>
+        <translation type="vanished">Ansicht</translation>
     </message>
     <message>
         <source>Horizontal Range</source>
-        <translation>Horizontaler Bereich</translation>
+        <translation type="vanished">Horizontaler Bereich</translation>
     </message>
     <message>
         <source>Data Groups</source>
-        <translation>Daten Gruppen</translation>
+        <translation type="vanished">Daten Gruppen</translation>
     </message>
     <message>
         <source>Data Plots</source>
-        <translation>Daten-Diagramme</translation>
+        <translation type="vanished">Daten-Diagramme</translation>
     </message>
     <message>
         <source>Data</source>
-        <translation>Daten</translation>
+        <translation type="vanished">Daten</translation>
     </message>
     <message>
         <source>Points</source>
-        <translation>Punkte</translation>
+        <translation type="vanished">Punkte</translation>
     </message>
     <message>
         <source>Scale</source>
-        <translation>Multiplikator</translation>
+        <translation type="vanished">Multiplikator</translation>
     </message>
 </context>
 <context>
@@ -314,6 +339,37 @@
     <message>
         <source>Flow Control</source>
         <translation type="vanished">Fluss-Kontrolle</translation>
+    </message>
+</context>
+<context>
+    <name>Donate</name>
+    <message>
+        <source>Donate</source>
+        <translation>Spende</translation>
+    </message>
+    <message>
+        <source>Later</source>
+        <translation>Später</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>Schließen</translation>
+    </message>
+    <message>
+        <source>Support the development of %1!</source>
+        <translation>Unterstützen Sie die Entwicklung von %1!</translation>
+    </message>
+    <message>
+        <source>Serial Studio is free &amp; open-source software supported by volunteers. Consider donating to support development efforts :)</source>
+        <translation>Serial Studio ist eine freie &amp; Open-Source-Software, die von Freiwilligen unterstützt wird. Ziehen Sie eine Spende zur Unterstützung der Entwicklung in Betracht :)</translation>
+    </message>
+    <message>
+        <source>You can also support this project by sharing it, reporting bugs and proposing new features!</source>
+        <translation>Sie können dieses Projekt auch unterstützen, indem Sie es teilen, Fehler melden und neue Funktionen vorschlagen!</translation>
+    </message>
+    <message>
+        <source>Don&apos;t annoy me again!</source>
+        <translation>Ärgern Sie mich nicht mehr!</translation>
     </message>
 </context>
 <context>
@@ -463,6 +519,33 @@
     </message>
 </context>
 <context>
+    <name>Footer</name>
+    <message>
+        <source>Close</source>
+        <translation>Schließen</translation>
+    </message>
+    <message>
+        <source>Add group</source>
+        <translation>Gruppe hinzufügen</translation>
+    </message>
+    <message>
+        <source>Open existing project...</source>
+        <translation>Vorhandenes Projekt öffnen...</translation>
+    </message>
+    <message>
+        <source>Create new project</source>
+        <translation>Neues Projekt erstellen</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Bewerbung</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Speichern</translation>
+    </message>
+</context>
+<context>
     <name>Group</name>
     <message>
         <source>Invalid</source>
@@ -473,15 +556,34 @@
     <name>GyroDelegate</name>
     <message>
         <source>%1° YAW</source>
-        <translation>%1 Gierachse</translation>
+        <translation type="vanished">%1 Gierachse</translation>
     </message>
     <message>
         <source>%1° ROLL</source>
-        <translation>%1 Rollachse</translation>
+        <translation type="vanished">%1 Rollachse</translation>
     </message>
     <message>
         <source>%1° PITCH</source>
-        <translation>%1° Neigachse</translation>
+        <translation type="vanished">%1° Neigachse</translation>
+    </message>
+</context>
+<context>
+    <name>Header</name>
+    <message>
+        <source>Project title (required)</source>
+        <translation>Projekttitel (erforderlich)</translation>
+    </message>
+    <message>
+        <source>Data separator (default is &apos;,&apos;)</source>
+        <translation>Datentrennzeichen (Standard ist &apos;,&apos;)</translation>
+    </message>
+    <message>
+        <source>Frame start sequence (default is &apos;%1&apos;)</source>
+        <translation>Startsequenz des Rahmens (Standard ist &apos;%1&apos;)</translation>
+    </message>
+    <message>
+        <source>Frame end sequence (default is &apos;%1&apos;)</source>
+        <translation>Rahmenendsequenz (Standard ist &apos;%1&apos;)</translation>
     </message>
 </context>
 <context>
@@ -590,7 +692,7 @@
     </message>
     <message>
         <source>Serial port error</source>
-        <translation>Fehler an der seriellen Schnittstelle</translation>
+        <translation type="vanished">Fehler an der seriellen Schnittstelle</translation>
     </message>
 </context>
 <context>
@@ -602,6 +704,157 @@
     <message>
         <source>Network port</source>
         <translation>Netzwerk Schnittstelle</translation>
+    </message>
+</context>
+<context>
+    <name>JSON::Editor</name>
+    <message>
+        <source>Dataset widgets</source>
+        <translation>Widgets für Datensätze</translation>
+    </message>
+    <message>
+        <source>Accelerometer</source>
+        <translation>Beschleunigungsmesser</translation>
+    </message>
+    <message>
+        <source>Gyroscope</source>
+        <translation>Gyroskop</translation>
+    </message>
+    <message>
+        <source>Map</source>
+        <translation type="vanished">Karte</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Keine</translation>
+    </message>
+    <message>
+        <source>Gauge</source>
+        <translation>Messgerät</translation>
+    </message>
+    <message>
+        <source>Bar/level</source>
+        <translation>Bar/Niveau</translation>
+    </message>
+    <message>
+        <source>Compass</source>
+        <translation>Kompass</translation>
+    </message>
+    <message>
+        <source>New Project</source>
+        <translation>Neues Projekt</translation>
+    </message>
+    <message>
+        <source>Do you want to save your changes?</source>
+        <translation>Möchten Sie Ihre Änderungen speichern?</translation>
+    </message>
+    <message>
+        <source>You have unsaved modifications in this project!</source>
+        <translation>Sie haben nicht gespeicherte Änderungen in diesem Projekt!</translation>
+    </message>
+    <message>
+        <source>Project error</source>
+        <translation>Projektfehler</translation>
+    </message>
+    <message>
+        <source>Project title cannot be empty!</source>
+        <translation>Der Projekttitel darf nicht leer sein!</translation>
+    </message>
+    <message>
+        <source>Project error - Group %1</source>
+        <translation>Projektfehler - Gruppe %1</translation>
+    </message>
+    <message>
+        <source>Group title cannot be empty!</source>
+        <translation>Der Gruppentitel darf nicht leer sein!</translation>
+    </message>
+    <message>
+        <source>Project error - Group %1, Dataset %2</source>
+        <translation>Projektfehler - Gruppe %1, Datensatz %2</translation>
+    </message>
+    <message>
+        <source>Dataset title cannot be empty!</source>
+        <translation>Der Titel des Datensatzes darf nicht leer sein!</translation>
+    </message>
+    <message>
+        <source>Warning - Group %1, Dataset %2</source>
+        <translation>Warnung - Gruppe %1, Datensatz %2</translation>
+    </message>
+    <message>
+        <source>Dataset contains duplicate frame index position! Continue?</source>
+        <translation>Der Datensatz enthält eine doppelte Frame-Indexposition! Weiter?</translation>
+    </message>
+    <message>
+        <source>Save JSON project</source>
+        <translation>JSON-Projekt speichern</translation>
+    </message>
+    <message>
+        <source>File open error</source>
+        <translation>Fehler beim Öffnen einer Datei</translation>
+    </message>
+    <message>
+        <source>Select JSON file</source>
+        <translation>JSON Modelldatei auswählen</translation>
+    </message>
+    <message>
+        <source>New Group</source>
+        <translation>Neue Gruppe</translation>
+    </message>
+    <message>
+        <source>Delete group &quot;%1&quot;</source>
+        <translation>Gruppe &quot;%1&quot; löschen</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete this group?</source>
+        <translation>Sind Sie sicher, dass Sie diese Gruppe löschen wollen?</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to change the group-level widget?</source>
+        <translation>Sind Sie sicher, dass Sie das Widget auf Gruppenebene ändern möchten?</translation>
+    </message>
+    <message>
+        <source>Existing datasets for this group will be deleted</source>
+        <translation>Vorhandene Datensätze für diese Gruppe werden gelöscht</translation>
+    </message>
+    <message>
+        <source>Accelerometer %1</source>
+        <translation>Beschleunigungsmesser %1</translation>
+    </message>
+    <message>
+        <source>Gyro %1</source>
+        <translation>Kreisel %1</translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation>Breitengrad</translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation>Längengrad</translation>
+    </message>
+    <message>
+        <source>New dataset</source>
+        <translation>Neuer Datensatz</translation>
+    </message>
+    <message>
+        <source>Delete dataset &quot;%1&quot;</source>
+        <translation>Datensatz &quot;%1&quot; löschen</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete this dataset?</source>
+        <translation>Sind Sie sicher, dass Sie diesen Datensatz löschen wollen?</translation>
+    </message>
+    <message>
+        <source>GPS</source>
+        <translation>GPS</translation>
+    </message>
+    <message>
+        <source>Multiple data plot</source>
+        <translation>Mehrfache Datenplot</translation>
+    </message>
+    <message>
+        <source>Altitude</source>
+        <translation>Höhenlage</translation>
     </message>
 </context>
 <context>
@@ -620,11 +873,11 @@
     </message>
     <message>
         <source>JSON map file loaded successfully!</source>
-        <translation>JSON Modelldatei erfolgreich geladen!</translation>
+        <translation type="vanished">JSON Modelldatei erfolgreich geladen!</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; loaded into memory</source>
-        <translation>Datei %1 geladen</translation>
+        <translation type="vanished">Datei %1 geladen</translation>
     </message>
     <message>
         <source>Cannot read JSON file</source>
@@ -641,6 +894,147 @@
     <message>
         <source>The format of the received data does not correspond to the selected JSON map file.</source>
         <translation type="vanished">Das Format der empfangenen Daten stimmt nicht mit der ausgewählten JSON Modelldatei überein.</translation>
+    </message>
+</context>
+<context>
+    <name>JSONDropArea</name>
+    <message>
+        <source>Drop JSON and CSV files here</source>
+        <translation>JSON und CSV Dateien hierher Ziehen</translation>
+    </message>
+</context>
+<context>
+    <name>JsonDatasetDelegate</name>
+    <message>
+        <source>Dataset %1 - %2</source>
+        <translation>Datensatz %1 - %2</translation>
+    </message>
+    <message>
+        <source>Title:</source>
+        <translation>Titel:</translation>
+    </message>
+    <message>
+        <source>Sensor reading, uptime, etc...</source>
+        <translation>Sensormesswerte, Betriebszeit usw...</translation>
+    </message>
+    <message>
+        <source>Units:</source>
+        <translation>Einheiten:</translation>
+    </message>
+    <message>
+        <source>Volts, meters, seconds, etc...</source>
+        <translation>Volt, Meter, Sekunden, usw...</translation>
+    </message>
+    <message>
+        <source>Frame index:</source>
+        <translation>Frame-Index:</translation>
+    </message>
+    <message>
+        <source>Generate graph:</source>
+        <translation type="vanished">Erzeugen Sie ein Diagramm:</translation>
+    </message>
+    <message>
+        <source>Widget:</source>
+        <translation>Widget:</translation>
+    </message>
+    <message>
+        <source>Min value:</source>
+        <translation>Minimaler Wert:</translation>
+    </message>
+    <message>
+        <source>Max value:</source>
+        <translation>Maximaler Wert:</translation>
+    </message>
+    <message>
+        <source>Generate plot:</source>
+        <translation>Grafik generieren:</translation>
+    </message>
+    <message>
+        <source>Logarithmic plot:</source>
+        <translation>Logarithmische Grafik:</translation>
+    </message>
+    <message>
+        <source>FFT plot:</source>
+        <translation>FFT-Grafik:</translation>
+    </message>
+    <message>
+        <source>FFT Samples:</source>
+        <translation>FFT-Proben:</translation>
+    </message>
+    <message>
+        <source>Alarm level:</source>
+        <translation>Alarmstufe:</translation>
+    </message>
+    <message>
+        <source>Note:</source>
+        <translation>Anmerkung:</translation>
+    </message>
+    <message>
+        <source>The compass widget expects values from 0° to 360°.</source>
+        <translation>Das Kompass-Widget erwartet Werte von 0° bis 360°.</translation>
+    </message>
+    <message>
+        <source>Display LED:</source>
+        <translation>LED anzeigen:</translation>
+    </message>
+</context>
+<context>
+    <name>JsonEditor</name>
+    <message>
+        <source>JSON Editor - %1</source>
+        <translation>JSON-Editor - %1</translation>
+    </message>
+    <message>
+        <source>Project title (required)</source>
+        <translation type="vanished">Projekttitel (erforderlich)</translation>
+    </message>
+    <message>
+        <source>Data separator (default is &apos;,&apos;)</source>
+        <translation type="vanished">Datentrennzeichen (Standard ist &apos;,&apos;)</translation>
+    </message>
+    <message>
+        <source>Frame start sequence (default is &apos;%1&apos;)</source>
+        <translation type="vanished">Startsequenz des Rahmens (Standard ist &apos;%1&apos;)</translation>
+    </message>
+    <message>
+        <source>Frame end sequence (default is &apos;%1&apos;)</source>
+        <translation type="vanished">Rahmenendsequenz (Standard ist &apos;%1&apos;)</translation>
+    </message>
+    <message>
+        <source>Start something awesome</source>
+        <translation>Starten Sie etwas Großartiges</translation>
+    </message>
+    <message>
+        <source>Click on the &quot;%1&quot; button to begin</source>
+        <translation type="vanished">Klicken Sie auf die Schaltfläche &quot;%1&quot;, um zu beginnen</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="vanished">Schließen</translation>
+    </message>
+    <message>
+        <source>Add group</source>
+        <translation type="vanished">Gruppe hinzufügen</translation>
+    </message>
+    <message>
+        <source>Open existing project...</source>
+        <translation type="vanished">Vorhandenes Projekt öffnen...</translation>
+    </message>
+    <message>
+        <source>Create new project</source>
+        <translation type="vanished">Neues Projekt erstellen</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="vanished">Bewerbung</translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="vanished">Speichern</translation>
+    </message>
+    <message>
+        <source>Click on the &quot;Add group&quot; button to begin</source>
+        <translation>Klicken Sie auf die Schaltfläche &quot;Gruppe hinzufügen&quot;, um zu beginnen</translation>
     </message>
 </context>
 <context>
@@ -680,6 +1074,46 @@
     <message>
         <source>JSON files</source>
         <translation type="vanished">JSON Dateien</translation>
+    </message>
+</context>
+<context>
+    <name>JsonGroupDelegate</name>
+    <message>
+        <source>Group %1 - %2</source>
+        <translation>Gruppe %1 - %2</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <source>Add dataset</source>
+        <translation>Datensatz hinzufügen</translation>
+    </message>
+    <message>
+        <source>Note:</source>
+        <translation>Anmerkung:</translation>
+    </message>
+    <message>
+        <source>The accelerometer widget expects values in m/s².</source>
+        <translation>Das Beschleunigungsmesser-Widget erwartet Werte in m/s².</translation>
+    </message>
+    <message>
+        <source>The gyroscope widget expects values in degrees (0° to 360°).</source>
+        <translation>Das Gyroskop-Widget erwartet Werte in Grad (0° bis 360°).</translation>
+    </message>
+</context>
+<context>
+    <name>KLed</name>
+    <message>
+        <source>LED on</source>
+        <comment>Accessible name of a Led whose state is on</comment>
+        <translation>LED an</translation>
+    </message>
+    <message>
+        <source>LED off</source>
+        <comment>Accessible name of a Led whose state is off</comment>
+        <translation>LED aus</translation>
     </message>
 </context>
 <context>
@@ -738,7 +1172,15 @@
     </message>
     <message>
         <source>Connect</source>
-        <translation>Verbinden</translation>
+        <translation type="vanished">Verbinden</translation>
+    </message>
+    <message>
+        <source>Advanced setup</source>
+        <translation>Erweiterte Einstellungen</translation>
+    </message>
+    <message>
+        <source>Connect to broker</source>
+        <translation>Verbindung zum Broker</translation>
     </message>
 </context>
 <context>
@@ -879,12 +1321,139 @@
         <source>MQTT client error</source>
         <translation>MQTT-Clientfehler</translation>
     </message>
+    <message>
+        <source>0: At most once</source>
+        <translation>0: Höchstens einmal</translation>
+    </message>
+    <message>
+        <source>1: At least once</source>
+        <translation>1: Mindestens einmal</translation>
+    </message>
+    <message>
+        <source>2: Exactly once</source>
+        <translation>2: Genau einmal</translation>
+    </message>
+    <message>
+        <source>System default</source>
+        <translation>System-Standard</translation>
+    </message>
+    <message>
+        <source>Select CA file</source>
+        <translation>CA-Datei auswählen</translation>
+    </message>
+    <message>
+        <source>Cannot open CA file!</source>
+        <translation>CA-Datei kann nicht geöffnet werden!</translation>
+    </message>
+    <message>
+        <source>MQTT client SSL/TLS error, ignore?</source>
+        <translation>MQTT-Client SSL/TLS-Fehler, ignorieren?</translation>
+    </message>
+</context>
+<context>
+    <name>MQTTConfiguration</name>
+    <message>
+        <source>MQTT Configuration</source>
+        <translation>MQTT-Konfiguration</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>Ausführung</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation>Modus</translation>
+    </message>
+    <message>
+        <source>QOS level</source>
+        <translation>QOS-Niveau</translation>
+    </message>
+    <message>
+        <source>Keep alive (s)</source>
+        <translation>Überlebenszeit (s)</translation>
+    </message>
+    <message>
+        <source>Host</source>
+        <translation>Server</translation>
+    </message>
+    <message>
+        <source>Port</source>
+        <translation>Port</translation>
+    </message>
+    <message>
+        <source>Topic</source>
+        <translation>Thema</translation>
+    </message>
+    <message>
+        <source>Retain</source>
+        <translation>Behalten</translation>
+    </message>
+    <message>
+        <source>MQTT topic</source>
+        <translation>MQTT-Thema</translation>
+    </message>
+    <message>
+        <source>Add retain flag</source>
+        <translation>Behalten-Flag hinzufügen</translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation>Nutzer</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>Kennwort</translation>
+    </message>
+    <message>
+        <source>MQTT username</source>
+        <translation>MQTT-Benutzername</translation>
+    </message>
+    <message>
+        <source>MQTT password</source>
+        <translation>MQTT-Kennwort</translation>
+    </message>
+    <message>
+        <source>Enable SSL/TLS:</source>
+        <translation>SSL/TLS aktivieren:</translation>
+    </message>
+    <message>
+        <source>Certificate:</source>
+        <translation>Zertifikat:</translation>
+    </message>
+    <message>
+        <source>Use system database</source>
+        <translation>Systemdatenbank verwenden</translation>
+    </message>
+    <message>
+        <source>Custom CA file</source>
+        <translation>CA-Datei auswählen</translation>
+    </message>
+    <message>
+        <source>Protocol:</source>
+        <translation>Protokoll:</translation>
+    </message>
+    <message>
+        <source>CA file:</source>
+        <translation>CA-datei:</translation>
+    </message>
+    <message>
+        <source>Disconnect</source>
+        <translation>Trennen</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Verbinden</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>Bewerbung</translation>
+    </message>
 </context>
 <context>
     <name>MapDelegate</name>
     <message>
         <source>Center on coordinate</source>
-        <translation>Koordinate zentrieren</translation>
+        <translation type="vanished">Koordinate zentrieren</translation>
     </message>
 </context>
 <context>
@@ -962,20 +1531,16 @@
         <translation>Dashboard</translation>
     </message>
     <message>
-        <source>Widgets</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Show setup pane</source>
         <translation>Setup-Bereich anzeigen</translation>
     </message>
     <message>
         <source>Hide menubar</source>
-        <translation>Menüleiste ausblenden</translation>
+        <translation type="vanished">Menüleiste ausblenden</translation>
     </message>
     <message>
         <source>Show menubar</source>
-        <translation>Menüleiste anzeigen</translation>
+        <translation type="vanished">Menüleiste anzeigen</translation>
     </message>
     <message>
         <source>Exit full screen</source>
@@ -1043,7 +1608,7 @@
     </message>
     <message>
         <source>Show log file</source>
-        <translation>Logdatei anzeigen</translation>
+        <translation type="vanished">Logdatei anzeigen</translation>
     </message>
     <message>
         <source>Report bug</source>
@@ -1129,10 +1694,6 @@
         <translation>Dashboard</translation>
     </message>
     <message>
-        <source>Widgets</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Show setup pane</source>
         <translation>Setup-Bereich anzeigen</translation>
     </message>
@@ -1202,7 +1763,7 @@
     </message>
     <message>
         <source>Show log file</source>
-        <translation>Logdatei anzeigen</translation>
+        <translation type="vanished">Logdatei anzeigen</translation>
     </message>
     <message>
         <source>Report bug</source>
@@ -1211,6 +1772,105 @@
     <message>
         <source>Print</source>
         <translation>Drucken</translation>
+    </message>
+</context>
+<context>
+    <name>Misc::MacExtras</name>
+    <message>
+        <source>Setup</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <source>Console</source>
+        <translation>Konsole</translation>
+    </message>
+    <message>
+        <source>Widgets</source>
+        <translation type="vanished">Widgets</translation>
+    </message>
+    <message>
+        <source>Dashboard</source>
+        <translation>Dashboard</translation>
+    </message>
+</context>
+<context>
+    <name>Misc::ModuleManager</name>
+    <message>
+        <source>Initializing...</source>
+        <translation>Initialisierung...</translation>
+    </message>
+    <message>
+        <source>Configuring updater...</source>
+        <translation>Konfigurieren des Updaters...</translation>
+    </message>
+    <message>
+        <source>Initializing modules...</source>
+        <translation>Module initialisieren...</translation>
+    </message>
+    <message>
+        <source>Loading user interface...</source>
+        <translation>Benutzeroberfläche laden...</translation>
+    </message>
+    <message>
+        <source>The rendering engine change will take effect after restart</source>
+        <translation type="vanished">Die Änderung der Rendering-Engine wird nach dem Neustart wirksam</translation>
+    </message>
+    <message>
+        <source>Do you want to restart %1 now?</source>
+        <translation type="vanished">Möchten Sie %1 jetzt neu starten?</translation>
+    </message>
+</context>
+<context>
+    <name>Misc::ThemeManager</name>
+    <message>
+        <source>The theme change will take effect after restart</source>
+        <translation>Die Änderung des Themas wird nach dem Neustart wirksam</translation>
+    </message>
+    <message>
+        <source>Do you want to restart %1 now?</source>
+        <translation>Möchten Sie %1 jetzt neu starten?</translation>
+    </message>
+</context>
+<context>
+    <name>Misc::Utilities</name>
+    <message>
+        <source>Check for updates automatically?</source>
+        <translation>Automatish auf Updates prüfen?</translation>
+    </message>
+    <message>
+        <source>Should %1 automatically check for updates? You can always check for updates manually from the &quot;Help&quot; menu</source>
+        <translation>Soll %1 Automatish auf Updates prüfen? Sie können jederzeit manuell über das Menü &quot;Hilfe&quot; nach Updates suchen</translation>
+    </message>
+</context>
+<context>
+    <name>ModuleManager</name>
+    <message>
+        <source>Initializing...</source>
+        <translation type="vanished">Initialisierung...</translation>
+    </message>
+    <message>
+        <source>Configuring updater...</source>
+        <translation type="vanished">Konfigurieren des Updaters...</translation>
+    </message>
+    <message>
+        <source>Initializing modules...</source>
+        <translation type="vanished">Module initialisieren...</translation>
+    </message>
+    <message>
+        <source>Starting timers...</source>
+        <translation type="vanished">Timer starten...</translation>
+    </message>
+    <message>
+        <source>Loading user interface...</source>
+        <translation type="vanished">Benutzeroberfläche laden...</translation>
+    </message>
+    <message>
+        <source>The rendering engine change will take effect after restart</source>
+        <translation type="vanished">Die Änderung der Rendering-Engine wird nach dem Neustart wirksam</translation>
+    </message>
+    <message>
+        <source>Do you want to restart %1 now?</source>
+        <translation type="vanished">Möchten Sie %1 jetzt neu starten?</translation>
     </message>
 </context>
 <context>
@@ -1237,11 +1897,46 @@
     </message>
     <message>
         <source>Host</source>
-        <translation>Server</translation>
+        <translation type="vanished">Server</translation>
+    </message>
+    <message>
+        <source>Multicast</source>
+        <translation>Multicast</translation>
+    </message>
+    <message>
+        <source>Remote address</source>
+        <translation>Entfernte Adresse</translation>
+    </message>
+    <message>
+        <source>Local port</source>
+        <translation>Lokaler Port</translation>
+    </message>
+    <message>
+        <source>Type 0 for automatic port</source>
+        <translation>Geben Sie 0 ein, um den Port automatisch zuzuweisen</translation>
+    </message>
+    <message>
+        <source>Remote port</source>
+        <translation>Entfernter Port</translation>
     </message>
 </context>
 <context>
     <name>Plugins::Bridge</name>
+    <message>
+        <source>Unable to start plugin TCP server</source>
+        <translation type="vanished">Plugin-TCP-Server kann nicht gestartet werden</translation>
+    </message>
+    <message>
+        <source>Plugin server</source>
+        <translation type="vanished">Plugin Server</translation>
+    </message>
+    <message>
+        <source>Invalid pending connection</source>
+        <translation type="vanished">Ungültige ausstehende Verbindung</translation>
+    </message>
+</context>
+<context>
+    <name>Plugins::Server</name>
     <message>
         <source>Unable to start plugin TCP server</source>
         <translation>Plugin-TCP-Server kann nicht gestartet werden</translation>
@@ -1260,6 +1955,36 @@
     <message>
         <source>Failed to load welcome text :(</source>
         <translation>Begrüßungstext konnte nicht geladen werden :(</translation>
+    </message>
+</context>
+<context>
+    <name>QwtPlotRenderer</name>
+    <message>
+        <source>Documents</source>
+        <translation>Dokumente</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Bilder</translation>
+    </message>
+    <message>
+        <source>Export File Name</source>
+        <translation>Name der Exportdatei</translation>
+    </message>
+</context>
+<context>
+    <name>QwtPolarRenderer</name>
+    <message>
+        <source>Documents</source>
+        <translation>Dokumente</translation>
+    </message>
+    <message>
+        <source>Images</source>
+        <translation>Bilder</translation>
+    </message>
+    <message>
+        <source>Export File Name</source>
+        <translation>Name der Exportdatei</translation>
     </message>
 </context>
 <context>
@@ -1287,6 +2012,10 @@
     <message>
         <source>Flow Control</source>
         <translation>Fluss-Kontrolle</translation>
+    </message>
+    <message>
+        <source>Auto-reconnect</source>
+        <translation>Auto-Wiederverbindung</translation>
     </message>
 </context>
 <context>
@@ -1378,6 +2107,30 @@
         <source>Applications/plugins can interact with %1 by establishing a TCP connection on port 7777.</source>
         <translation>Anwendungen/Plugins können mit %1 interagieren, indem sie eine TCP-Verbindung an Port 7777 herstellen.</translation>
     </message>
+    <message>
+        <source>Theme</source>
+        <translation>Thema</translation>
+    </message>
+    <message>
+        <source>Data separator</source>
+        <translation>Daten-Trennzeichen</translation>
+    </message>
+    <message>
+        <source>UI refresh rate</source>
+        <translation type="vanished">UI-Aktualisierungsrate</translation>
+    </message>
+    <message>
+        <source>Rendering engine</source>
+        <translation type="vanished">Rendering Motor</translation>
+    </message>
+    <message>
+        <source>Threaded frame parsing</source>
+        <translation type="vanished">Analyse von Multithreading-Rahmen</translation>
+    </message>
+    <message>
+        <source>Multithreaded frame parsing</source>
+        <translation>Analyse von Multithreading-Rahmen</translation>
+    </message>
 </context>
 <context>
     <name>Setup</name>
@@ -1387,19 +2140,19 @@
     </message>
     <message>
         <source>Auto (JSON from serial device)</source>
-        <translation>Auto (JSON von Gerät)</translation>
+        <translation type="vanished">Auto (JSON von Gerät)</translation>
     </message>
     <message>
         <source>Manual (use JSON map file)</source>
-        <translation>Manuell (JSON Modelldatei)</translation>
+        <translation type="vanished">Manuell (JSON Modelldatei)</translation>
     </message>
     <message>
         <source>Change map file (%1)</source>
-        <translation>Modelldatei ändern (%1)</translation>
+        <translation type="vanished">Modelldatei ändern (%1)</translation>
     </message>
     <message>
         <source>Select map file</source>
-        <translation>Modelldatei auswählen</translation>
+        <translation type="vanished">Modelldatei auswählen</translation>
     </message>
     <message>
         <source>COM Port</source>
@@ -1485,6 +2238,26 @@
         <source>MQTT</source>
         <translation>MQTT</translation>
     </message>
+    <message>
+        <source>Setup</source>
+        <translation>Einstellungen</translation>
+    </message>
+    <message>
+        <source>No parsing (device sends JSON data)</source>
+        <translation>Kein Parsing (Gerät sendet JSON-Daten)</translation>
+    </message>
+    <message>
+        <source>Parse via JSON project file</source>
+        <translation>Parsen über JSON-Projektdatei</translation>
+    </message>
+    <message>
+        <source>Change project file (%1)</source>
+        <translation>Projektdatei ändern (%1)</translation>
+    </message>
+    <message>
+        <source>Select project file</source>
+        <translation>Projektdatei auswählen</translation>
+    </message>
 </context>
 <context>
     <name>Sidebar</name>
@@ -1494,14 +2267,61 @@
     </message>
 </context>
 <context>
+    <name>Terminal</name>
+    <message>
+        <source>Copy</source>
+        <translation>Kopieren</translation>
+    </message>
+    <message>
+        <source>Select all</source>
+        <translation>Alles auswählen</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Löschen</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Drucken</translation>
+    </message>
+    <message>
+        <source>Save as</source>
+        <translation>Speichern als</translation>
+    </message>
+    <message>
+        <source>Hide menubar</source>
+        <translation type="vanished">Menüleiste ausblenden</translation>
+    </message>
+    <message>
+        <source>Show menubar</source>
+        <translation type="vanished">Menüleiste anzeigen</translation>
+    </message>
+    <message>
+        <source>No data received so far</source>
+        <translation>Noch keine Daten verfügbar</translation>
+    </message>
+    <message>
+        <source>Send data to device</source>
+        <translation>Daten an das Gerät senden</translation>
+    </message>
+    <message>
+        <source>Echo</source>
+        <translation>Echo</translation>
+    </message>
+    <message>
+        <source>Autoscroll</source>
+        <translation>Auto Scroll</translation>
+    </message>
+    <message>
+        <source>Show timestamp</source>
+        <translation>Zeitstempel anzeigen</translation>
+    </message>
+</context>
+<context>
     <name>Toolbar</name>
     <message>
         <source>Console</source>
         <translation>Konsole</translation>
-    </message>
-    <message>
-        <source>Widgets</source>
-        <translation></translation>
     </message>
     <message>
         <source>About</source>
@@ -1526,6 +2346,31 @@
     <message>
         <source>Connect</source>
         <translation>Verbinden</translation>
+    </message>
+    <message>
+        <source>JSON Editor</source>
+        <translation>JSON-Editor</translation>
+    </message>
+</context>
+<context>
+    <name>TreeView</name>
+    <message>
+        <source>JSON Project Tree</source>
+        <translation>JSON-Projektbaum</translation>
+    </message>
+</context>
+<context>
+    <name>UI::Dashboard</name>
+    <message>
+        <source>Status Panel</source>
+        <translation>Status-Panel</translation>
+    </message>
+</context>
+<context>
+    <name>UI::WidgetLoader</name>
+    <message>
+        <source>Invalid</source>
+        <translation>Ungültig</translation>
     </message>
 </context>
 <context>
@@ -1552,10 +2397,166 @@
     </message>
 </context>
 <context>
+    <name>ViewOptions</name>
+    <message>
+        <source>View</source>
+        <translation>Ansicht</translation>
+    </message>
+    <message>
+        <source>Plot divisions (%1)</source>
+        <translation type="vanished">Abteilungen (%1)</translation>
+    </message>
+    <message>
+        <source>Datasets</source>
+        <translation>Datensatz</translation>
+    </message>
+    <message>
+        <source>Multiple data plots</source>
+        <translation>Mehrfache Datenplots</translation>
+    </message>
+    <message>
+        <source>FFT plots</source>
+        <translation>FFT-Grafiken</translation>
+    </message>
+    <message>
+        <source>Data plots</source>
+        <translation>Daten-Grafiken</translation>
+    </message>
+    <message>
+        <source>Bars</source>
+        <translation>Barren</translation>
+    </message>
+    <message>
+        <source>Gauges</source>
+        <translation>Messgeräte</translation>
+    </message>
+    <message>
+        <source>Compasses</source>
+        <translation>Kompasse</translation>
+    </message>
+    <message>
+        <source>Gyroscopes</source>
+        <translation>Gyroskope</translation>
+    </message>
+    <message>
+        <source>Accelerometers</source>
+        <translation>Beschleunigungsmesser</translation>
+    </message>
+    <message>
+        <source>GPS</source>
+        <translation>GPS</translation>
+    </message>
+    <message>
+        <source>LED Panels</source>
+        <translation>LED-Paneele</translation>
+    </message>
+    <message>
+        <source>View options</source>
+        <translation type="vanished">Anzeige-Optionen</translation>
+    </message>
+    <message>
+        <source>Points:</source>
+        <translation>Punkte:</translation>
+    </message>
+    <message>
+        <source>Widgets:</source>
+        <translation type="vanished">Widgets:</translation>
+    </message>
+    <message>
+        <source>Visualization options</source>
+        <translation>Visualisierungsoptionen</translation>
+    </message>
+    <message>
+        <source>Decimal places:</source>
+        <translation>Nachkommastellen:</translation>
+    </message>
+    <message>
+        <source>Widget size:</source>
+        <translation>Widget-Größe:</translation>
+    </message>
+</context>
+<context>
+    <name>WidgetGrid</name>
+    <message>
+        <source>Data</source>
+        <translation>Daten</translation>
+    </message>
+</context>
+<context>
+    <name>Widgets</name>
+    <message>
+        <source>View</source>
+        <translation type="vanished">Ansicht</translation>
+    </message>
+    <message>
+        <source>Widgets</source>
+        <translation type="vanished">Widgets</translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::FFTPlot</name>
+    <message>
+        <source>Samples</source>
+        <translation>Proben</translation>
+    </message>
+    <message>
+        <source>FFT of %1</source>
+        <translation>FFT von %1</translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::GPS</name>
+    <message>
+        <source>Latitude</source>
+        <translation type="vanished">Breitengrad</translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation type="vanished">Längengrad</translation>
+    </message>
+    <message>
+        <source>Altitude</source>
+        <translation type="vanished">Höhenlage</translation>
+    </message>
+    <message>
+        <source>Loading...</source>
+        <translation type="vanished">Laden...</translation>
+    </message>
+    <message>
+        <source>Double-click to open map</source>
+        <translation type="vanished">Doppelklick zum Öffnen der Karte</translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::MultiPlot</name>
+    <message>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
+    </message>
+    <message>
+        <source>Samples</source>
+        <translation>Proben</translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::Plot</name>
+    <message>
+        <source>Samples</source>
+        <translation>Proben</translation>
+    </message>
+</context>
+<context>
+    <name>Widgets::WidgetLoader</name>
+    <message>
+        <source>Invalid</source>
+        <translation type="vanished">Ungültig</translation>
+    </message>
+</context>
+<context>
     <name>main</name>
     <message>
         <source>Check for updates automatically?</source>
-        <translation>Automatish auf Updates prüfen?</translation>
+        <translation type="vanished">Automatish auf Updates prüfen?</translation>
     </message>
     <message>
         <source>Should %1 automatically check for updates? You can always check for updates manually from the &quot;About&quot; dialog</source>
@@ -1563,11 +2564,11 @@
     </message>
     <message>
         <source>Drop JSON and CSV files here</source>
-        <translation>JSON und CSV Dateien hierher Ziehen</translation>
+        <translation type="vanished">JSON und CSV Dateien hierher Ziehen</translation>
     </message>
     <message>
         <source>Should %1 automatically check for updates? You can always check for updates manually from the &quot;Help&quot; menu</source>
-        <translation>Soll %1 Automatish auf Updates prüfen? Sie können jederzeit manuell über das Menü &quot;Hilfe&quot; nach Updates suchen</translation>
+        <translation type="vanished">Soll %1 Automatish auf Updates prüfen? Sie können jederzeit manuell über das Menü &quot;Hilfe&quot; nach Updates suchen</translation>
     </message>
 </context>
 </TS>

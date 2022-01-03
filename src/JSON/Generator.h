@@ -20,49 +20,42 @@
  * THE SOFTWARE.
  */
 
-#ifndef JSON_GENERATOR_H
-#define JSON_GENERATOR_H
+#pragma once
 
-#include <QPair>
 #include <QFile>
-#include <QTimer>
 #include <QObject>
-#include <QThread>
-#include <QJSValue>
-#include <QJSEngine>
 #include <QSettings>
-#include <QQmlEngine>
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include "Frame.h"
-#include "FrameInfo.h"
+#include <JSON/Frame.h>
 
 namespace JSON
 {
-class JSONWorker : public QObject
-{
-    Q_OBJECT
-
-signals:
-    void finished();
-    void jsonReady(const JFI_Object &info);
-
-public:
-    JSONWorker(const QByteArray &data, const quint64 frame, const QDateTime &time);
-
-public slots:
-    void process();
-
-private:
-    QDateTime m_time;
-    QByteArray m_data;
-    quint64 m_frame;
-    QJSEngine *m_engine;
-};
-
+/**
+ * @brief The Generator class
+ *
+ * The JSON generator class receives raw frame data from the I/O manager
+ * class and generates a JSON file that represents the project title,
+ * the groups that compose the project and the datasets that compose each
+ * group.
+ *
+ * As described in the documentation of the @c Frame class, the process
+ * of receiving data and generating the Serial Studio user interface is:
+ * 1) Physical device sends data
+ * 2) I/O driver receives data
+ * 3) I/O manager processes the data and separates the frames
+ * 4) JSON generator creates a JSON file with the data contained in each frame.
+ * 5) UI dashboard class receives the JSON file.
+ * 6) TimerEvents class notifies the UI dashboard that the user interface should
+ *    be re-generated.
+ * 7) UI dashboard feeds JSON data to a @c Frame object.
+ * 8) The @c Frame object creates a model of the JSON data with the values of
+ *    the latest received frame.
+ * 9) UI dashboard updates the widgets with the C++ model provided by this class.
+ */
 class Generator : public QObject
 {
     // clang-format off
@@ -79,10 +72,17 @@ class Generator : public QObject
                NOTIFY operationModeChanged)
     // clang-format on
 
-signals:
+Q_SIGNALS:
     void jsonFileMapChanged();
     void operationModeChanged();
-    void jsonChanged(const JFI_Object &info);
+    void jsonChanged(const QJsonObject &json);
+
+private:
+    explicit Generator();
+    Generator(Generator &&) = delete;
+    Generator(const Generator &) = delete;
+    Generator &operator=(Generator &&) = delete;
+    Generator &operator=(const Generator &) = delete;
 
 public:
     enum OperationMode
@@ -90,44 +90,34 @@ public:
         kManual = 0x00,
         kAutomatic = 0x01,
     };
-    Q_ENUMS(OperationMode)
+    Q_ENUM(OperationMode)
 
-public:
-    static Generator *getInstance();
+    static Generator &instance();
 
     QString jsonMapData() const;
     QString jsonMapFilename() const;
     QString jsonMapFilepath() const;
     OperationMode operationMode() const;
 
-public slots:
+public Q_SLOTS:
     void loadJsonMap();
-    void setOperationMode(const OperationMode mode);
-    void loadJsonMap(const QString &path, const bool silent = false);
+    void loadJsonMap(const QString &path);
+    void setOperationMode(const JSON::Generator::OperationMode &mode);
 
-private:
-    Generator();
-
-public slots:
+public Q_SLOTS:
     void readSettings();
-    void loadJFI(const JFI_Object &info);
     void writeSettings(const QString &path);
-    void loadJSON(const QJsonDocument &json);
 
-private slots:
+private Q_SLOTS:
     void reset();
     void readData(const QByteArray &data);
 
 private:
     QFile m_jsonMap;
-    quint64 m_frameCount;
+    QJsonObject m_json;
     QSettings m_settings;
     QString m_jsonMapData;
     OperationMode m_opMode;
-
-    QThread m_workerThread;
-    JSONWorker *m_jsonWorker;
+    QJsonParseError m_error;
 };
 }
-
-#endif

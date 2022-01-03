@@ -20,23 +20,34 @@
  * THE SOFTWARE.
  */
 
-import QtQuick 2.12
-import QtQuick.Window 2.12
-import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.12
+import QtQuick 2.3
+import QtQuick.Window 2.3
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
 
-Window {
+import "../FramelessWindow" as FramelessWindow
+
+FramelessWindow.CustomWindow {
     id: root
 
     //
     // Window options
     //
+    width: minimumWidth
+    height: minimumHeight
+    minimizeEnabled: false
+    maximizeEnabled: false
     title: qsTr("CSV Player")
-    minimumWidth: column.implicitWidth + 4 * app.spacing
-    maximumWidth: column.implicitWidth + 4 * app.spacing
-    minimumHeight: column.implicitHeight + 4 * app.spacing
-    maximumHeight: column.implicitHeight + 4 * app.spacing
-    flags: Qt.Dialog | Qt.WindowStaysOnTopHint | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
+    titlebarText: Cpp_ThemeManager.text
+    x: (Screen.desktopAvailableWidth - width) / 2
+    y: (Screen.desktopAvailableHeight - height) / 2
+    titlebarColor: Cpp_ThemeManager.dialogBackground
+    backgroundColor: Cpp_ThemeManager.dialogBackground
+    minimumWidth: column.implicitWidth + 4 * app.spacing + 2 * root.shadowMargin
+    maximumWidth: column.implicitWidth + 4 * app.spacing + 2 * root.shadowMargin
+    extraFlags: Qt.WindowStaysOnTopHint | Qt.Dialog | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
+    minimumHeight: column.implicitHeight + 4 * app.spacing + titlebar.height + 2 * root.shadowMargin
+    maximumHeight: column.implicitHeight + 4 * app.spacing + titlebar.height + 2 * root.shadowMargin
 
     //
     // Close CSV file when window is closed
@@ -47,26 +58,45 @@ Window {
     }
 
     //
+    // Automatically display the window when the CSV file is opened
+    //
+    Connections {
+        target: Cpp_CSV_Player
+        function onOpenChanged() {
+            if (Cpp_CSV_Player.isOpen)
+                root.visible = true
+            else
+                root.visible = false
+        }
+    }
+
+    //
     // Use page item to set application palette
     //
     Page {
-        anchors.margins: 0
-        anchors.fill: parent
-        palette.text: "#fff"
-        palette.buttonText: "#fff"
-        palette.windowText: "#fff"
-        palette.window: app.windowBackgroundColor
+        anchors {
+            fill: parent
+            margins: root.shadowMargin
+            topMargin: titlebar.height + root.shadowMargin
+        }
 
-        //
-        // Automatically display the window when the CSV file is opened
-        //
-        Connections {
-            target: Cpp_CSV_Player
-            function onOpenChanged() {
-                if (Cpp_CSV_Player.isOpen)
-                    root.visible = true
-                else
-                    root.visible = false
+        palette.text: Cpp_ThemeManager.text
+        palette.buttonText: Cpp_ThemeManager.text
+        palette.windowText: Cpp_ThemeManager.text
+        palette.window: Cpp_ThemeManager.dialogBackground
+        background: Rectangle {
+            radius: root.radius
+            color: root.backgroundColor
+
+            Rectangle {
+                height: root.radius
+                color: root.backgroundColor
+
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                }
             }
         }
 
@@ -94,7 +124,7 @@ Window {
                 Layout.fillWidth: true
                 value: Cpp_CSV_Player.progress
                 onValueChanged: {
-                    if (value != Cpp_CSV_Player.progress)
+                    if (value !== Cpp_CSV_Player.progress)
                         Cpp_CSV_Player.setProgress(value)
                 }
             }
@@ -109,20 +139,18 @@ Window {
                 Layout.alignment: Qt.AlignHCenter
 
                 Button {
-                    icon.color: "#fff"
                     opacity: enabled ? 1 : 0.5
+                    icon.color: Cpp_ThemeManager.text
                     Layout.alignment: Qt.AlignVCenter
                     onClicked: Cpp_CSV_Player.previousFrame()
                     icon.source: "qrc:/icons/media-prev.svg"
                     enabled: Cpp_CSV_Player.progress > 0 && !Cpp_CSV_Player.isPlaying
-
-                    Behavior on opacity {NumberAnimation{}}
                 }
 
                 Button {
                     icon.width: 32
                     icon.height: 32
-                    icon.color: "#fff"
+                    icon.color: Cpp_ThemeManager.text
                     onClicked: Cpp_CSV_Player.toggle()
                     Layout.alignment: Qt.AlignVCenter
                     icon.source: Cpp_CSV_Player.isPlaying ? "qrc:/icons/media-pause.svg" :
@@ -130,14 +158,12 @@ Window {
                 }
 
                 Button {
-                    icon.color: "#fff"
                     opacity: enabled ? 1 : 0.5
+                    icon.color: Cpp_ThemeManager.text
                     Layout.alignment: Qt.AlignVCenter
                     onClicked: Cpp_CSV_Player.nextFrame()
                     icon.source: "qrc:/icons/media-next.svg"
                     enabled: Cpp_CSV_Player.progress < 1 && !Cpp_CSV_Player.isPlaying
-
-                    Behavior on opacity {NumberAnimation{}}
                 }
             }
         }

@@ -20,28 +20,22 @@
  * THE SOFTWARE.
  */
 
-#include "Console.h"
-#include "Manager.h"
-
 #include <QFile>
 #include <QPrinter>
-#include <QTextCodec>
+#include <QDateTime>
 #include <QFileDialog>
 #include <QPrintDialog>
 #include <QTextDocument>
 
-#include <Logger.h>
+#include <IO/Manager.h>
+#include <IO/Console.h>
 #include <Misc/Utilities.h>
-#include <ConsoleAppender.h>
 #include <Misc/TimerEvents.h>
-
-using namespace IO;
-static Console *INSTANCE = nullptr;
 
 /**
  * Generates a hexdump of the given data
  */
-static QString HexDump(const char *data, size_t size)
+static QString HexDump(const char *data, const size_t size)
 {
     char str[4096] = "";
     char ascii[17];
@@ -83,7 +77,7 @@ static QString HexDump(const char *data, size_t size)
 /**
  * Constructor function
  */
-Console::Console()
+IO::Console::Console()
     : m_dataMode(DataMode::DataUTF8)
     , m_lineEnding(LineEnding::NoLineEnding)
     , m_displayMode(DisplayMode::DisplayPlainText)
@@ -97,32 +91,25 @@ Console::Console()
     clear();
 
     // Read received data automatically
-    auto dm = Manager::getInstance();
-    auto te = Misc::TimerEvents::getInstance();
-    connect(te, SIGNAL(timeout42Hz()), this, SLOT(displayData()));
-    connect(dm, &Manager::dataSent, this, &Console::onDataSent);
-    connect(dm, &Manager::dataReceived, this, &Console::onDataReceived);
-
-    // Log something to look like a pro
-    LOG_TRACE() << "Class initialized";
+    auto dm = &Manager::instance();
+    connect(dm, &Manager::dataSent, this, &IO::Console::onDataSent);
+    connect(dm, &Manager::dataReceived, this, &IO::Console::onDataReceived);
 }
 
 /**
  * Returns the only instance of the class
  */
-Console *Console::getInstance()
+IO::Console &IO::Console::instance()
 {
-    if (!INSTANCE)
-        INSTANCE = new Console;
-
-    return INSTANCE;
+    static Console singleton;
+    return singleton;
 }
 
 /**
  * Returns @c true if the console shall display the commands that the user has sent
  * to the serial/network device.
  */
-bool Console::echo() const
+bool IO::Console::echo() const
 {
     return m_echo;
 }
@@ -131,7 +118,7 @@ bool Console::echo() const
  * Returns @c true if the vertical position of the console display shall be automatically
  * moved to show latest data.
  */
-bool Console::autoscroll() const
+bool IO::Console::autoscroll() const
 {
     return m_autoscroll;
 }
@@ -139,7 +126,7 @@ bool Console::autoscroll() const
 /**
  * Returns @c true if data buffer contains information that the user can export.
  */
-bool Console::saveAvailable() const
+bool IO::Console::saveAvailable() const
 {
     return m_textBuffer.length() > 0;
 }
@@ -147,7 +134,7 @@ bool Console::saveAvailable() const
 /**
  * Returns @c true if a timestamp should be shown before each displayed data block.
  */
-bool Console::showTimestamp() const
+bool IO::Console::showTimestamp() const
 {
     return m_showTimestamp;
 }
@@ -161,7 +148,7 @@ bool Console::showTimestamp() const
  *                                and send the appropiate binary data to the target
  *                                device.
  */
-Console::DataMode Console::dataMode() const
+IO::Console::DataMode IO::Console::dataMode() const
 {
     return m_dataMode;
 }
@@ -174,7 +161,7 @@ Console::DataMode Console::dataMode() const
  * - @c LineEnding::CarriageReturn,               add '\r' to the data sent by the user
  * - @c LineEnding::BothNewLineAndCarriageReturn  add '\r\n' to the data sent by the user
  */
-Console::LineEnding Console::lineEnding() const
+IO::Console::LineEnding IO::Console::lineEnding() const
 {
     return m_lineEnding;
 }
@@ -184,7 +171,7 @@ Console::LineEnding Console::lineEnding() const
  * - @c DisplayMode::DisplayPlainText   display incoming data as an UTF-8 stream
  * - @c DisplayMode::DisplayHexadecimal display incoming data in hexadecimal format
  */
-Console::DisplayMode Console::displayMode() const
+IO::Console::DisplayMode IO::Console::displayMode() const
 {
     return m_displayMode;
 }
@@ -196,7 +183,7 @@ Console::DisplayMode Console::displayMode() const
  *       keyboard. This behaviour is managed by the @c historyUp() & @c historyDown()
  *       functions.
  */
-QString Console::currentHistoryString() const
+QString IO::Console::currentHistoryString() const
 {
     if (m_historyItem < m_historyItems.count() && m_historyItem >= 0)
         return m_historyItems.at(m_historyItem);
@@ -208,9 +195,9 @@ QString Console::currentHistoryString() const
  * Returns a list with the available data (sending) modes. This list must be synchronized
  * with the order of the @c DataMode enums.
  */
-QStringList Console::dataModes() const
+StringList IO::Console::dataModes() const
 {
-    QStringList list;
+    StringList list;
     list.append(tr("ASCII"));
     list.append(tr("HEX"));
     return list;
@@ -220,9 +207,9 @@ QStringList Console::dataModes() const
  * Returns a list with the available line endings options. This list must be synchronized
  * with the order of the @c LineEnding enums.
  */
-QStringList Console::lineEndings() const
+StringList IO::Console::lineEndings() const
 {
-    QStringList list;
+    StringList list;
     list.append(tr("No line ending"));
     list.append(tr("New line"));
     list.append(tr("Carriage return"));
@@ -234,9 +221,9 @@ QStringList Console::lineEndings() const
  * Returns a list with the available console display modes. This list must be synchronized
  * with the order of the @c DisplayMode enums.
  */
-QStringList Console::displayModes() const
+StringList IO::Console::displayModes() const
 {
-    QStringList list;
+    StringList list;
     list.append(tr("Plain text"));
     list.append(tr("Hexadecimal"));
     return list;
@@ -245,7 +232,7 @@ QStringList Console::displayModes() const
 /**
  * Validates the given @a text and adds space to display the text in a byte-oriented view
  */
-QString Console::formatUserHex(const QString &text)
+QString IO::Console::formatUserHex(const QString &text)
 {
     // Remove spaces & stuff
     auto data = text.simplified();
@@ -271,7 +258,7 @@ QString Console::formatUserHex(const QString &text)
 /**
  * Allows the user to export the information displayed on the console
  */
-void Console::save()
+void IO::Console::save()
 {
     // No data buffer received, abort
     if (!saveAvailable())
@@ -301,45 +288,43 @@ void Console::save()
 /**
  * Deletes all the text displayed by the current QML text document
  */
-void Console::clear()
+void IO::Console::clear()
 {
-    m_dataBuffer.clear();
     m_textBuffer.clear();
+    m_textBuffer.reserve(10 * 1000);
     m_isStartingLine = true;
-    m_dataBuffer.reserve(1200 * 1000);
-
-    emit dataReceived();
+    Q_EMIT dataReceived();
 }
 
 /**
- * Comamnds sent by the user are stored in a @c QStringList, in which the first items
+ * Comamnds sent by the user are stored in a @c StringList, in which the first items
  * are the oldest commands.
  *
  * The user can navigate the list using the up/down keys. This function allows the user
  * to navigate the list from most recent command to oldest command.
  */
-void Console::historyUp()
+void IO::Console::historyUp()
 {
     if (m_historyItem > 0)
     {
         --m_historyItem;
-        emit historyItemChanged();
+        Q_EMIT historyItemChanged();
     }
 }
 
 /**
- * Comamnds sent by the user are stored in a @c QStringList, in which the first items
+ * Comamnds sent by the user are stored in a @c StringList, in which the first items
  * are the oldest commands.
  *
  * The user can navigate the list using the up/down keys. This function allows the user
  * to navigate the list from oldst command to most recent command.
  */
-void Console::historyDown()
+void IO::Console::historyDown()
 {
     if (m_historyItem < m_historyItems.count() - 1)
     {
         ++m_historyItem;
-        emit historyItemChanged();
+        Q_EMIT historyItemChanged();
     }
 }
 
@@ -350,10 +335,10 @@ void Console::historyDown()
  * @note @c data is added to the history of sent commands, regardless if the data writing
  *       was successfull or not.
  */
-void Console::send(const QString &data)
+void IO::Console::send(const QString &data)
 {
     // Check conditions
-    if (data.isEmpty() || !Manager::getInstance()->connected())
+    if (data.isEmpty() || !Manager::instance().connected())
         return;
 
     // Add user command to history
@@ -384,17 +369,17 @@ void Console::send(const QString &data)
     }
 
     // Write data to device
-    Manager::getInstance()->writeData(bin);
+    Manager::instance().writeData(bin);
 }
 
 /**
  * Enables or disables displaying sent data in the console screen. See @c echo() for more
  * information.
  */
-void Console::setEcho(const bool enabled)
+void IO::Console::setEcho(const bool enabled)
 {
     m_echo = enabled;
-    emit echoChanged();
+    Q_EMIT echoChanged();
 }
 
 /**
@@ -403,7 +388,7 @@ void Console::setEcho(const bool enabled)
  *
  * @param fontFamily the font family to use to render the text document
  */
-void Console::print(const QString &fontFamily)
+void IO::Console::print(const QString &fontFamily)
 {
     // Get document font (specified by QML ui)
     QFont font;
@@ -430,62 +415,62 @@ void Console::print(const QString &fontFamily)
 }
 
 /**
- * Changes the data mode for user commands. See @c dataMode() for more information.
- */
-void Console::setDataMode(const DataMode mode)
-{
-    m_dataMode = mode;
-    emit dataModeChanged();
-}
-
-/**
  * Enables/disables displaying a timestamp of each received data block.
  */
-void Console::setShowTimestamp(const bool enabled)
+void IO::Console::setShowTimestamp(const bool enabled)
 {
     if (showTimestamp() != enabled)
     {
         m_showTimestamp = enabled;
-        emit showTimestampChanged();
+        Q_EMIT showTimestampChanged();
     }
 }
 
 /**
  * Enables/disables autoscrolling of the console text.
  */
-void Console::setAutoscroll(const bool enabled)
+void IO::Console::setAutoscroll(const bool enabled)
 {
     if (autoscroll() != enabled)
     {
         m_autoscroll = enabled;
-        emit autoscrollChanged();
+        Q_EMIT autoscrollChanged();
     }
+}
+
+/**
+ * Changes the data mode for user commands. See @c dataMode() for more information.
+ */
+void IO::Console::setDataMode(const IO::Console::DataMode &mode)
+{
+    m_dataMode = mode;
+    Q_EMIT dataModeChanged();
 }
 
 /**
  * Changes line ending mode for sent user commands. See @c lineEnding() for more
  * information.
  */
-void Console::setLineEnding(const LineEnding mode)
+void IO::Console::setLineEnding(const IO::Console::LineEnding &mode)
 {
     m_lineEnding = mode;
-    emit lineEndingChanged();
+    Q_EMIT lineEndingChanged();
 }
 
 /**
  * Changes the display mode of the console. See @c displayMode() for more information.
  */
-void Console::setDisplayMode(const DisplayMode mode)
+void IO::Console::setDisplayMode(const IO::Console::DisplayMode &mode)
 {
     m_displayMode = mode;
-    emit displayModeChanged();
+    Q_EMIT displayModeChanged();
 }
 
 /**
  * Inserts the given @a string into the list of lines of the console, if @a addTimestamp
  * is set to @c true, an timestamp is added for each line.
  */
-void Console::append(const QString &string, const bool addTimestamp)
+void IO::Console::append(const QString &string, const bool addTimestamp)
 {
     // Abort on empty strings
     if (string.isEmpty())
@@ -509,11 +494,11 @@ void Console::append(const QString &string, const bool addTimestamp)
     processedString.reserve(data.length() + timestamp.length());
 
     // Create list with lines (keep separators)
-    QStringList tokens;
+    StringList tokens;
     QString currentToken;
     for (int i = 0; i < data.length(); ++i)
     {
-        if (data.at(i) == "\n")
+        if (data.at(i) == '\n')
         {
             tokens.append(currentToken);
             tokens.append("\n");
@@ -544,8 +529,8 @@ void Console::append(const QString &string, const bool addTimestamp)
     m_textBuffer.append(processedString);
 
     // Update UI
-    emit dataReceived();
-    emit stringReceived(processedString);
+    Q_EMIT dataReceived();
+    Q_EMIT stringReceived(processedString);
 }
 
 /**
@@ -553,36 +538,24 @@ void Console::append(const QString &string, const bool addTimestamp)
  * done by the @c dataToString() function, which displays incoming data either in UTF-8
  * or in hexadecimal mode.
  */
-void Console::displayData()
-{
-    append(dataToString(m_dataBuffer), showTimestamp());
-    m_dataBuffer.clear();
-}
-
-/**
- * Displays the given @a data in the console. @c QByteArray to ~@c QString conversion is
- * done by the @c dataToString() function, which displays incoming data either in UTF-8
- * or in hexadecimal mode.
- */
-void Console::onDataSent(const QByteArray &data)
+void IO::Console::onDataSent(const QByteArray &data)
 {
     if (echo())
         append(dataToString(data) + "\n", showTimestamp());
 }
 
 /**
- * Adds the given @a data to the incoming data buffer, which is read later by the UI
- * refresh functions (displayData())
+ * Displays the given @a data in the console
  */
-void Console::onDataReceived(const QByteArray &data)
+void IO::Console::onDataReceived(const QByteArray &data)
 {
-    m_dataBuffer.append(data);
+    append(dataToString(data), showTimestamp());
 }
 
 /**
  * Registers the given @a command to the list of sent commands.
  */
-void Console::addToHistory(const QString &command)
+void IO::Console::addToHistory(const QString &command)
 {
     // Remove old commands from history
     while (m_historyItems.count() > 100)
@@ -591,13 +564,13 @@ void Console::addToHistory(const QString &command)
     // Register command
     m_historyItems.append(command);
     m_historyItem = m_historyItems.count();
-    emit historyItemChanged();
+    Q_EMIT historyItemChanged();
 }
 
 /**
  * Converts the given @a data in HEX format into real binary data.
  */
-QByteArray Console::hexToBytes(const QString &data)
+QByteArray IO::Console::hexToBytes(const QString &data)
 {
     QString withoutSpaces = data;
     withoutSpaces.replace(" ", "");
@@ -607,7 +580,7 @@ QByteArray Console::hexToBytes(const QString &data)
     {
         auto chr1 = withoutSpaces.at(i);
         auto chr2 = withoutSpaces.at(i + 1);
-        auto byte = QString("%1%2").arg(chr1, chr2).toInt(nullptr, 16);
+        auto byte = QString("%1%2").arg(chr1, chr2).toInt(Q_NULLPTR, 16);
         array.append(byte);
     }
 
@@ -618,7 +591,7 @@ QByteArray Console::hexToBytes(const QString &data)
  * Converts the given @a data to a string according to the console display mode set by the
  * user.
  */
-QString Console::dataToString(const QByteArray &data)
+QString IO::Console::dataToString(const QByteArray &data)
 {
     switch (displayMode())
     {
@@ -637,7 +610,7 @@ QString Console::dataToString(const QByteArray &data)
 /**
  * Converts the given @a data into an UTF-8 string
  */
-QString Console::plainTextStr(const QByteArray &data)
+QString IO::Console::plainTextStr(const QByteArray &data)
 {
     QString str = QString::fromUtf8(data);
 
@@ -650,7 +623,7 @@ QString Console::plainTextStr(const QByteArray &data)
 /**
  * Converts the given @a data into a HEX representation string.
  */
-QString Console::hexadecimalStr(const QByteArray &data)
+QString IO::Console::hexadecimalStr(const QByteArray &data)
 {
     // Remove line breaks from data
     QByteArray copy = data;
@@ -671,3 +644,7 @@ QString Console::hexadecimalStr(const QByteArray &data)
     // Return string
     return str;
 }
+
+#ifdef SERIAL_STUDIO_INCLUDE_MOC
+#    include "moc_Console.cpp"
+#endif
